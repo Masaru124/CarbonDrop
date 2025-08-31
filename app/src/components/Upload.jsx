@@ -1,20 +1,38 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
 
 export default function Upload({ onUploaded }) {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const canvasRef = useRef(null);
   const chartRef = useRef(null); // 👈 track chart instance
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   const upload = async () => {
     if (!file) return alert("Choose an image first");
     const fd = new FormData();
     fd.append("file", file);
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login to upload receipts.");
+      navigate("/login");
+      return;
+    }
+
     const res = await fetch("http://localhost:8000/upload_receipt", {
       method: "POST",
       body: fd,
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
     });
 
     if (!res.ok) {
@@ -54,10 +72,29 @@ export default function Upload({ onUploaded }) {
             },
           ],
         },
-        options: { responsive: true },
+        options: { responsive: true, maintainAspectRatio: false },
       });
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <section className="upload-card py-10 px-6 max-w-6xl mx-auto">
+        <h2 className="text-3xl font-semibold text-center mb-8">
+          Upload Receipt
+        </h2>
+        <div className="text-center">
+          <p className="text-lg mb-4">Please login to upload and analyze receipts.</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="upload-card py-10 px-6 max-w-6xl mx-auto">
@@ -107,23 +144,31 @@ export default function Upload({ onUploaded }) {
                 </tr>
               </thead>
               <tbody>
-                {result.items.map((it, idx) => (
-                  <tr
-                    key={idx}
-                    className="odd:bg-white even:bg-gray-50 hover:bg-gray-100"
-                  >
-                    <td className="px-4 py-2" title={it.raw_line}>
-                      {it.name}
-                    </td>
-                    <td className="px-4 py-2">
-                      {it.matched_name || "—"} ({it.match_score || 0})
-                    </td>
-                    <td className="px-4 py-2">
-                      {it.qty} {it.unit || ""}
-                    </td>
-                    <td className="px-4 py-2 font-medium">{it.footprint}</td>
-                  </tr>
-                ))}
+                {(() => {
+                  const top3 = result.items
+                    .slice()
+                    .sort((a, b) => b.footprint - a.footprint)
+                    .slice(0, 3)
+                    .map((x) => x.name);
+
+                  return result.items.map((it, idx) => {
+                    const highlight = top3.includes(it.name);
+                    return (
+                      <tr
+                        key={idx}
+                        className={
+                          "odd:bg-white even:bg-gray-50 hover:bg-gray-100 " +
+                          (highlight ? "bg-red-100 font-bold" : "")
+                        }
+                      >
+                        <td className="px-4 py-2">{it.name}</td>
+                        <td className="px-4 py-2">{it.matched_name}</td>
+                        <td className="px-4 py-2">{it.qty} {it.unit}</td>
+                        <td className="px-4 py-2">{it.footprint}</td>
+                      </tr>
+                    );
+                  });
+                })()}
               </tbody>
             </table>
           </div>

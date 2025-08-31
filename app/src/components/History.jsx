@@ -1,19 +1,47 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Upload from "./Upload";
 
 const History = () => {
   const [history, setHistory] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    if (token) {
+      loadHistory();
+    }
+  }, []);
 
   const loadHistory = () => {
-    fetch("http://localhost:8000/footprint_history")
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("http://localhost:8000/footprint_history", {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
       .then((r) => r.json())
-      .then((d) => setHistory(d.history || []))
+      .then((d) => setHistory(d || []))
       .catch(() => {});
   };
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
+  if (!isLoggedIn) {
+    return (
+      <main className="max-w-6xl mx-auto px-6 py-10">
+        <h2 className="text-2xl font-semibold mb-6">History</h2>
+        <div className="text-center">
+          <p className="text-lg mb-4">Please login to view your receipt history.</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-10">
