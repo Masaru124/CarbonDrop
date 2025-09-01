@@ -10,6 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password_hash = Column(String)
+    eco_credits = Column(Integer, default=0)
 
     receipts = relationship("Receipt", back_populates="owner")
 
@@ -34,3 +35,13 @@ class Item(Base):
     footprint = Column(Float)
 
     receipt = relationship("Receipt", back_populates="items")
+
+class UserOffset(Base):
+    __tablename__ = "user_offsets"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    trees_planted = Column(Integer)
+    co2_offset_kg = Column(Float)
+    date = Column(DateTime, default=datetime.utcnow)
+
+    owner = relationship("User")

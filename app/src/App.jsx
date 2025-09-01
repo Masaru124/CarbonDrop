@@ -6,6 +6,7 @@ import Leaderboard from "./components/Leaderboard";
 import Upload from "./components/Upload";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import Simulator from "./components/Simulator";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/" element={<Upload />} />
         <Route path="/history" element={<History />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/simulator" element={<Simulator />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

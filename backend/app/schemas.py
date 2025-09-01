@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from datetime import datetime
 
 # ------------------
 # User schemas
@@ -15,6 +16,7 @@ class UserLogin(UserBase):
 
 class UserOut(UserBase):
     id: int
+    eco_credits: int
 
 # ------------------
 # Receipt / Item schemas
@@ -31,6 +33,7 @@ class ReceiptBase(BaseModel):
     user_id: int
     total_footprint: float
     items: List[ItemBase]
+    date: datetime
 
 # ------------------
 # Dashboard & Leaderboard

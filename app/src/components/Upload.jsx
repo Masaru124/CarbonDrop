@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
 
-export default function Upload({ onUploaded }) {
+export default function Upload({ onUploaded, onCreditsUpdated }) {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,6 +43,7 @@ export default function Upload({ onUploaded }) {
     const data = await res.json();
     setResult(data);
     if (onUploaded) onUploaded(data);
+    if (onCreditsUpdated) onCreditsUpdated();
 
     // Chart.js setup
     const labels = data.items.map((i) => i.matched_name || i.name);

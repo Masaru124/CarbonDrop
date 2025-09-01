@@ -27,6 +27,9 @@ export function Navbar() {
       <Link to="/dashboard" className="hover:underline">
         Dashboard
       </Link>
+      <Link to="/simulator" className="hover:underline">
+        What-if Simulator
+      </Link>
       <Link to="/leaderboard" className="hover:underline">
         Leaderboard
       </Link>
