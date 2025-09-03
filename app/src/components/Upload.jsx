@@ -80,7 +80,7 @@ export default function Upload({ onUploaded, onCreditsUpdated }) {
 
   if (!isLoggedIn) {
     return (
-      <section className="upload-card py-10 px-6 max-w-6xl mx-auto">
+      <section className="upload-card py-10 px-6 max-w-6xl mx-auto text-white">
         <h2 className="text-3xl font-semibold text-center mb-8">
           Upload Receipt
         </h2>
@@ -98,13 +98,13 @@ export default function Upload({ onUploaded, onCreditsUpdated }) {
   }
 
   return (
-    <section className="upload-card py-10 px-6 max-w-6xl mx-auto">
+    <section className="upload-card py-10 px-6 max-w-6xl mx-auto text-white min-h-[80vh]">
       <h2 className="text-3xl font-semibold text-center mb-8">
         Upload Receipt
       </h2>
 
       {/* Upload Box */}
-      <div className="flex flex-col items-center gap-4 bg-gray-50 p-8 rounded-2xl shadow-md">
+      <div className="flex flex-col items-center gap-4 bg-[#121212] text-white border-1 border-white p-8 rounded shadow-md">
         <input
           type="file"
           accept="image/*"

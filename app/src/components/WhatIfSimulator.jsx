@@ -128,8 +128,8 @@ export default function WhatIfSimulator() {
   }, []);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-green-700">What-if Simulator</h2>
+    <div className="p-6 text-white rounded shadow-md">
+      <h2 className="text-2xl font-bold mb-6">What-if Simulator</h2>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Meat Replacement Scenario */}

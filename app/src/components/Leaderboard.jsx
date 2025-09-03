@@ -27,7 +27,7 @@ export default function Leaderboard() {
 
   if (!isLoggedIn) {
     return (
-      <div className="p-6">
+      <div className="p-6 mx-auto max-w-6xl text-white">
         <h1 className="text-2xl font-bold">Community Leaderboard</h1>
         <div className="text-center">
           <p className="text-lg mb-4">Please login to view the community leaderboard.</p>
@@ -43,11 +43,11 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 mx-auto text-white h-[80vh]">
       <h1 className="text-2xl font-bold">Community Leaderboard</h1>
       <ul>
         {data.map((u, i) => (
-          <li key={i}>
+          <li key={i} className="py-2 border-b border-gray-700">
             {u.username} — {u.score} kg CO₂e
           </li>
         ))}

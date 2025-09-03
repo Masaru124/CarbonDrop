@@ -19,7 +19,7 @@ const History = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
     fetch("http://localhost:8000/footprint_history", {
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
       .then((d) => setHistory(d || []))
@@ -31,7 +31,9 @@ const History = () => {
       <main className="max-w-6xl mx-auto px-6 py-10">
         <h2 className="text-2xl font-semibold mb-6">History</h2>
         <div className="text-center">
-          <p className="text-lg mb-4">Please login to view your receipt history.</p>
+          <p className="text-lg mb-4">
+            Please login to view your receipt history.
+          </p>
           <button
             onClick={() => navigate("/login")}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
@@ -44,9 +46,9 @@ const History = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-10">
+    <main className="max-w-6xl mx-auto px-6 py-10 text-white">
       {/* Upload Component */}
-      <Upload onUploaded={loadHistory} />
+      <Upload onUploaded={loadHistory} className="h-[400px]" />
 
       {/* History Section */}
       <section className="mt-12">
@@ -59,7 +61,7 @@ const History = () => {
             {history.map((h) => (
               <li
                 key={h.id}
-                className="p-4 border rounded-lg shadow-sm bg-white hover:bg-gray-50 transition"
+                className="p-4 border rounded shadow-sm bg-[#121212] hover:bg-gray-50 transition"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">
