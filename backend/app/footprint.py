@@ -48,6 +48,15 @@ def load_dataset(csv_path):
         df['unit'] = 'kg'
         # Drop the Year column as it's not needed
         df = df.drop(columns=['Year'])
+    elif 'food_item' in df.columns and 'emissions_kg_co2_per_kg' in df.columns:
+        # Handle combined_food_emissions.csv structure
+        df = df.rename(columns={
+            'food_item': 'item',
+            'emissions_kg_co2_per_kg': 'co2'
+        })
+        df['unit'] = 'kg'
+        # Clean 'item' column by trimming whitespace
+        df['item'] = df['item'].astype(str).str.strip()
     else:
         # Handle the original footprint dataset structure
         df['item'] = df['item'].astype(str).str.strip()
