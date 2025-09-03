@@ -10,7 +10,7 @@ from . import models, schemas
 
 SECRET_KEY = "supersecret"  # 🔴 put in .env
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 3000
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()

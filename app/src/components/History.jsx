@@ -47,11 +47,9 @@ const History = () => {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-10 text-white">
-      {/* Upload Component */}
-      <Upload onUploaded={loadHistory} className="h-[400px]" />
 
       {/* History Section */}
-      <section className="mt-12">
+      <section className="mt-1">
         <h2 className="text-2xl font-semibold mb-6">History</h2>
 
         {history.length === 0 ? (
@@ -61,10 +59,10 @@ const History = () => {
             {history.map((h) => (
               <li
                 key={h.id}
-                className="p-4 border rounded shadow-sm bg-[#121212] hover:bg-gray-50 transition"
+                className="p-4 border rounded shadow-sm bg-[#121212] hover:bg-gray-700 transition"
               >
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-100">
                     {new Date(h.date).toLocaleString()}
                   </span>
                   <span className="text-lg font-medium text-green-600">
