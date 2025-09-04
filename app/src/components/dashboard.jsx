@@ -92,64 +92,98 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">My Carbon Dashboard</h1>
-      <button
-        onClick={downloadReport}
-        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Download PDF Report
-      </button>
-      <Line
-        data={{
-          labels: data.map((d) => d.month),
-          datasets: [
-            {
-              label: "kg CO₂e",
-              data: data.map((d) => d.total),
-              borderColor: "green",
+    <div className="p-6 bg-[#111111] text-white min-h-screen mx-auto">
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        My Carbon Dashboard
+      </h1>
+
+      {/* Line Chart */}
+      <div className="w-[100vh] bg-[#1a1a1a] p-4 rounded mx-auto shadow">
+        <Line
+          data={{
+            labels: data.map((d) => d.month),
+            datasets: [
+              {
+                label: "kg CO₂e",
+                data: data.map((d) => d.total),
+                borderColor: "#22c55e", // Tailwind green-500
+                backgroundColor: "rgba(34,197,94,0.2)",
+              },
+            ],
+          }}
+          options={{
+            plugins: {
+              legend: { labels: { color: "#fff" } },
             },
-          ],
-        }}
-      />
+            scales: {
+              x: { ticks: { color: "#aaa" }, grid: { color: "#333" } },
+              y: { ticks: { color: "#aaa" }, grid: { color: "#333" } },
+            },
+          }}
+        />
+        <button
+          onClick={downloadReport}
+          className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-900 shadow hover:transition-shadow"
+        >
+          Download PDF Report
+        </button>
+      </div>
 
       {/* Virtual Forest Section */}
       {userOffsets && (
         <div className="mt-8 grid md:grid-cols-4 gap-6">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-green-800 mb-2">🌳 Your Virtual Forest</h3>
-            <p className="text-3xl font-bold text-green-600">{userOffsets.total_trees} Trees</p>
-            <p className="text-sm text-green-700 mt-1">
+          {/* Virtual Forest */}
+          <div className="bg-[#1a1a1a] border border-green-700 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold text-green-400 mb-2">
+              🌳 Your Virtual Forest
+            </h3>
+            <p className="text-3xl font-bold text-green-500">
+              {userOffsets.total_trees} Trees
+            </p>
+            <p className="text-sm text-green-300 mt-1">
               Absorbing {userOffsets.total_offset} kg CO₂/year
             </p>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-2">💰 EcoCredits</h3>
-            <p className="text-3xl font-bold text-yellow-600">{userCredits} Credits</p>
-            <p className="text-sm text-yellow-700 mt-1">
+          {/* EcoCredits */}
+          <div className="bg-[#1a1a1a] border border-yellow-700 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-2">
+              💰 EcoCredits
+            </h3>
+            <p className="text-3xl font-bold text-yellow-500">
+              {userCredits} Credits
+            </p>
+            <p className="text-sm text-yellow-300 mt-1">
               Earn credits by uploading receipts
             </p>
-            <p className="text-xs text-yellow-600 mt-1">
-              100 credits = 1 tree
+            <p className="text-xs text-yellow-400 mt-1">100 credits = 1 tree</p>
+          </div>
+
+          {/* Achievement Badge */}
+          <div className="bg-[#1a1a1a] border border-blue-700 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold text-blue-400 mb-2">
+              🏆 Achievement Badge
+            </h3>
+            <p className="text-2xl font-bold text-blue-500">
+              {userOffsets.badge}
+            </p>
+            <p className="text-sm text-blue-300 mt-1">
+              {userOffsets.level} Level
             </p>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-2">🏆 Achievement Badge</h3>
-            <p className="text-2xl font-bold text-blue-600">{userOffsets.badge}</p>
-            <p className="text-sm text-blue-700 mt-1">{userOffsets.level} Level</p>
-          </div>
-
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-purple-800 mb-2">🎯 Quick Actions</h3>
+          {/* Quick Actions */}
+          <div className="bg-[#1a1a1a] border border-purple-700 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold text-purple-400 mb-2">
+              🎯 Quick Actions
+            </h3>
             <button
               onClick={() => navigate("/simulator")}
-              className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition"
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition shadow"
             >
               Plant More Trees
             </button>
-            <p className="text-xs text-purple-600 mt-2">
+            <p className="text-xs text-purple-300 mt-2">
               Visit the simulator to offset more CO₂
             </p>
           </div>
