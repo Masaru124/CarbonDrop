@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-import jwt
+from jose import jwt
 
 from .database import get_db
 from . import models, schemas
@@ -35,7 +35,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         username = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-    except jwt.PyJWTError:
+    except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
     user = db.query(models.User).filter(models.User.username == username).first()

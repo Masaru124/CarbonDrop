@@ -11,6 +11,25 @@ export default function WhatIfSimulator() {
   const [transportResult, setTransportResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // New simulation state variables
+  const [currentBulbs, setCurrentBulbs] = useState(10);
+  const [ledBulbs, setLedBulbs] = useState(10);
+  const [hoursPerDay, setHoursPerDay] = useState(4);
+  const [energyResult, setEnergyResult] = useState(null);
+
+  const [annualKm, setAnnualKm] = useState(15000);
+  const [fuelEfficiency, setFuelEfficiency] = useState(10);
+  const [evEfficiency, setEvEfficiency] = useState(0.2);
+  const [evResult, setEvResult] = useState(null);
+
+  const [importedMeals, setImportedMeals] = useState(10);
+  const [localReductionPercent, setLocalReductionPercent] = useState(50);
+  const [localFoodResult, setLocalFoodResult] = useState(null);
+
+  const [wasteKgPerWeek, setWasteKgPerWeek] = useState(5);
+  const [wasteReductionPercent, setWasteReductionPercent] = useState(30);
+  const [wasteResult, setWasteResult] = useState(null);
+
   // Offset related state
   const [offsetResult, setOffsetResult] = useState(null);
   const [userOffsets, setUserOffsets] = useState(null);
@@ -20,11 +39,14 @@ export default function WhatIfSimulator() {
   const simulateMeatReplacement = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/simulate_meat_replacement", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ meat_meals_per_week: meatMeals, weeks }),
-      });
+      const response = await fetch(
+        "http://localhost:8000/simulate_meat_replacement",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ meat_meals_per_week: meatMeals, weeks }),
+        }
+      );
       const result = await response.json();
       setMeatResult(result);
     } catch (error) {
@@ -36,20 +58,116 @@ export default function WhatIfSimulator() {
   const simulateTransportSwitch = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/simulate_transport_switch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          trips_per_year: trips,
-          distance_per_trip_km: distance,
-          from_mode: fromMode,
-          to_mode: toMode,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8000/simulate_transport_switch",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            trips_per_year: trips,
+            distance_per_trip_km: distance,
+            from_mode: fromMode,
+            to_mode: toMode,
+          }),
+        }
+      );
       const result = await response.json();
       setTransportResult(result);
     } catch (error) {
       console.error("Error simulating transport switch:", error);
+    }
+    setLoading(false);
+  };
+
+  const simulateEnergyEfficiency = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/simulate_energy_efficiency",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            current_bulbs: currentBulbs,
+            led_bulbs: ledBulbs,
+            hours_per_day: hoursPerDay,
+            days_per_year: 365,
+          }),
+        }
+      );
+      const result = await response.json();
+      setEnergyResult(result);
+    } catch (error) {
+      console.error("Error simulating energy efficiency:", error);
+    }
+    setLoading(false);
+  };
+
+  const simulateElectricVehicle = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/simulate_electric_vehicle",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            annual_km: annualKm,
+            current_fuel_efficiency: fuelEfficiency,
+            ev_efficiency: evEfficiency,
+          }),
+        }
+      );
+      const result = await response.json();
+      setEvResult(result);
+    } catch (error) {
+      console.error("Error simulating electric vehicle:", error);
+    }
+    setLoading(false);
+  };
+
+  const simulateLocalFood = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/simulate_local_food",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imported_meals_per_week: importedMeals,
+            local_reduction_percent: localReductionPercent,
+            weeks: 52,
+          }),
+        }
+      );
+      const result = await response.json();
+      setLocalFoodResult(result);
+    } catch (error) {
+      console.error("Error simulating local food:", error);
+    }
+    setLoading(false);
+  };
+
+  const simulateWasteReduction = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/simulate_waste_reduction",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            current_waste_kg_per_week: wasteKgPerWeek,
+            reduction_percent: wasteReductionPercent,
+            weeks: 52,
+          }),
+        }
+      );
+      const result = await response.json();
+      setWasteResult(result);
+    } catch (error) {
+      console.error("Error simulating waste reduction:", error);
     }
     setLoading(false);
   };
@@ -245,6 +363,217 @@ export default function WhatIfSimulator() {
                 Original annual CO₂: <strong>{transportResult.original_annual_co2} kg</strong>
                 <br />
                 New annual CO₂: <strong>{transportResult.new_annual_co2} kg</strong>
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Additional Simulations */}
+      <div className="grid md:grid-cols-2 gap-8 mt-8">
+        {/* Energy Efficiency */}
+        <div className="border border-gray-700 bg-gray-900 rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-4 text-yellow-300">Switch to LED Bulbs</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Current incandescent bulbs:</label>
+              <input
+                type="number"
+                value={currentBulbs}
+                onChange={(e) => setCurrentBulbs(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">LED replacement bulbs:</label>
+              <input
+                type="number"
+                value={ledBulbs}
+                onChange={(e) => setLedBulbs(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Hours per day:</label>
+              <input
+                type="number"
+                value={hoursPerDay}
+                onChange={(e) => setHoursPerDay(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1"
+                max="24"
+              />
+            </div>
+            <button
+              onClick={simulateEnergyEfficiency}
+              disabled={loading}
+              className="w-full bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 disabled:opacity-50"
+            >
+              {loading ? "Calculating..." : "Simulate"}
+            </button>
+          </div>
+
+          {energyResult && (
+            <div className="mt-4 p-3 bg-yellow-900/40 border border-yellow-700 rounded">
+              <h4 className="font-semibold text-yellow-400">{energyResult.scenario}</h4>
+              <p className="text-sm text-gray-300 mt-2">
+                Annual energy savings: <strong>{energyResult.annual_energy_savings} kWh</strong>
+                <br />
+                Annual CO₂ savings: <strong>{energyResult.annual_co2_savings} kg</strong>
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Electric Vehicle */}
+        <div className="border border-gray-700 bg-gray-900 rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-4 text-purple-300">Switch to Electric Vehicle</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Annual kilometers:</label>
+              <input
+                type="number"
+                value={annualKm}
+                onChange={(e) => setAnnualKm(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1000"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Current fuel efficiency (L/100km):</label>
+              <input
+                type="number"
+                value={fuelEfficiency}
+                onChange={(e) => setFuelEfficiency(parseFloat(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="5"
+                step="0.1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">EV efficiency (kWh/km):</label>
+              <input
+                type="number"
+                value={evEfficiency}
+                onChange={(e) => setEvEfficiency(parseFloat(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="0.1"
+                step="0.1"
+              />
+            </div>
+            <button
+              onClick={simulateElectricVehicle}
+              disabled={loading}
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 disabled:opacity-50"
+            >
+              {loading ? "Calculating..." : "Simulate"}
+            </button>
+          </div>
+
+          {evResult && (
+            <div className="mt-4 p-3 bg-purple-900/40 border border-purple-700 rounded">
+              <h4 className="font-semibold text-purple-400">{evResult.scenario}</h4>
+              <p className="text-sm text-gray-300 mt-2">
+                Annual CO₂ savings: <strong>{evResult.annual_co2_savings} kg</strong>
+                <br />
+                Current annual CO₂: <strong>{evResult.current_annual_co2} kg</strong>
+                <br />
+                New annual CO₂: <strong>{evResult.new_annual_co2} kg</strong>
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Local Food */}
+        <div className="border border-gray-700 bg-gray-900 rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-4 text-orange-300">Choose Local Food</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Imported meals per week:</label>
+              <input
+                type="number"
+                value={importedMeals}
+                onChange={(e) => setImportedMeals(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Local reduction (%):</label>
+              <input
+                type="number"
+                value={localReductionPercent}
+                onChange={(e) => setLocalReductionPercent(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="10"
+                max="100"
+              />
+            </div>
+            <button
+              onClick={simulateLocalFood}
+              disabled={loading}
+              className="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 disabled:opacity-50"
+            >
+              {loading ? "Calculating..." : "Simulate"}
+            </button>
+          </div>
+
+          {localFoodResult && (
+            <div className="mt-4 p-3 bg-orange-900/40 border border-orange-700 rounded">
+              <h4 className="font-semibold text-orange-400">{localFoodResult.scenario}</h4>
+              <p className="text-sm text-gray-300 mt-2">
+                Weekly CO₂ savings: <strong>{localFoodResult.weekly_co2_savings} kg</strong>
+                <br />
+                Annual CO₂ savings: <strong>{localFoodResult.annual_co2_savings} kg</strong>
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Waste Reduction */}
+        <div className="border border-gray-700 bg-gray-900 rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-4 text-red-300">Reduce Food Waste</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Current waste (kg/week):</label>
+              <input
+                type="number"
+                value={wasteKgPerWeek}
+                onChange={(e) => setWasteKgPerWeek(parseFloat(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="1"
+                step="0.5"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Reduction (%):</label>
+              <input
+                type="number"
+                value={wasteReductionPercent}
+                onChange={(e) => setWasteReductionPercent(parseInt(e.target.value))}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
+                min="10"
+                max="80"
+              />
+            </div>
+            <button
+              onClick={simulateWasteReduction}
+              disabled={loading}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 disabled:opacity-50"
+            >
+              {loading ? "Calculating..." : "Simulate"}
+            </button>
+          </div>
+
+          {wasteResult && (
+            <div className="mt-4 p-3 bg-red-900/40 border border-red-700 rounded">
+              <h4 className="font-semibold text-red-400">{wasteResult.scenario}</h4>
+              <p className="text-sm text-gray-300 mt-2">
+                Annual waste reduction: <strong>{wasteResult.annual_waste_reduction} kg</strong>
+                <br />
+                Annual CO₂ savings: <strong>{wasteResult.annual_co2_savings} kg</strong>
               </p>
             </div>
           )}

@@ -128,6 +128,106 @@ class WhatIfSimulator:
             'new_annual_co2': round(new_annual_co2, 2)
         }
 
+    def simulate_energy_efficiency(self, current_bulbs, led_bulbs, hours_per_day=4, days_per_year=365):
+        """
+        Simulate switching from incandescent to LED bulbs.
+        """
+        # Energy consumption in kWh per year
+        incandescent_wattage = 60  # watts per bulb
+        led_wattage = 9  # watts per bulb
+        kwh_per_watt_hour = 0.001  # conversion factor
+
+        current_annual_kwh = current_bulbs * incandescent_wattage * hours_per_day * days_per_year * kwh_per_watt_hour
+        new_annual_kwh = led_bulbs * led_wattage * hours_per_day * days_per_year * kwh_per_watt_hour
+        annual_savings_kwh = current_annual_kwh - new_annual_kwh
+
+        # CO2 emissions: ~0.4 kg CO2 per kWh (average grid mix)
+        co2_per_kwh = 0.4
+        annual_co2_savings = annual_savings_kwh * co2_per_kwh
+
+        return {
+            'scenario': f'Switch {current_bulbs} incandescent bulbs to {led_bulbs} LED bulbs',
+            'annual_energy_savings': round(annual_savings_kwh, 2),
+            'annual_co2_savings': round(annual_co2_savings, 2),
+            'current_annual_kwh': round(current_annual_kwh, 2),
+            'new_annual_kwh': round(new_annual_kwh, 2)
+        }
+
+    def simulate_electric_vehicle(self, annual_km, current_fuel_efficiency=10, ev_efficiency=0.2):
+        """
+        Simulate switching from gasoline car to electric vehicle.
+        """
+        # Fuel efficiency: L/100km for gas car, kWh/km for EV
+        # CO2 emissions: ~2.3 kg CO2 per liter of gasoline
+        co2_per_liter_gas = 2.3
+
+        # Calculate annual fuel consumption and emissions
+        current_fuel_liters = (annual_km / 100) * current_fuel_efficiency
+        current_annual_co2 = current_fuel_liters * co2_per_liter_gas
+
+        # EV energy consumption and emissions (assuming grid electricity)
+        new_annual_kwh = annual_km * ev_efficiency
+        new_annual_co2 = new_annual_kwh * 0.4  # kg CO2 per kWh
+        annual_co2_savings = current_annual_co2 - new_annual_co2
+
+        return {
+            'scenario': f'Switch to electric vehicle for {annual_km} km/year',
+            'annual_co2_savings': round(annual_co2_savings, 2),
+            'current_annual_co2': round(current_annual_co2, 2),
+            'new_annual_co2': round(new_annual_co2, 2),
+            'current_fuel_liters': round(current_fuel_liters, 2),
+            'new_annual_kwh': round(new_annual_kwh, 2)
+        }
+
+    def simulate_local_food(self, imported_meals_per_week, local_reduction_percent=50, weeks=52):
+        """
+        Simulate choosing local/seasonal food over imported food.
+        """
+        # Average CO2 impact: imported food travels ~2500km vs local food ~100km
+        # Transport CO2: ~0.1 kg CO2 per ton-km
+        imported_distance = 2500  # km
+        local_distance = 100  # km
+
+        # Assume average meal has 0.5kg of food transported
+        food_per_meal = 0.5  # kg
+        meals_reduced = imported_meals_per_week * (local_reduction_percent / 100)
+
+        current_weekly_co2 = (imported_meals_per_week * food_per_meal * imported_distance * 0.1) / 1000
+        new_weekly_co2 = (meals_reduced * food_per_meal * local_distance * 0.1) / 1000
+        weekly_savings = current_weekly_co2 - new_weekly_co2
+        annual_savings = weekly_savings * weeks
+
+        return {
+            'scenario': f'Reduce imported food by {local_reduction_percent}% ({imported_meals_per_week} meals/week)',
+            'weekly_co2_savings': round(weekly_savings, 2),
+            'annual_co2_savings': round(annual_savings, 2),
+            'current_weekly_co2': round(current_weekly_co2, 2),
+            'new_weekly_co2': round(new_weekly_co2, 2)
+        }
+
+    def simulate_waste_reduction(self, current_waste_kg_per_week, reduction_percent=30, weeks=52):
+        """
+        Simulate reducing food waste.
+        """
+        # CO2 impact of food waste: ~3.5 kg CO2 per kg of food waste
+        co2_per_kg_waste = 3.5
+
+        current_annual_waste = current_waste_kg_per_week * weeks
+        reduced_waste = current_waste_kg_per_week * (reduction_percent / 100)
+        new_annual_waste = current_annual_waste - reduced_waste * weeks
+
+        current_annual_co2 = current_annual_waste * co2_per_kg_waste
+        new_annual_co2 = new_annual_waste * co2_per_kg_waste
+        annual_co2_savings = current_annual_co2 - new_annual_co2
+
+        return {
+            'scenario': f'Reduce food waste by {reduction_percent}% ({current_waste_kg_per_week} kg/week)',
+            'annual_waste_reduction': round(reduced_waste * weeks, 2),
+            'annual_co2_savings': round(annual_co2_savings, 2),
+            'current_annual_co2': round(current_annual_co2, 2),
+            'new_annual_co2': round(new_annual_co2, 2)
+        }
+
 # Offset conversion constants
 CO2_PER_TREE_PER_YEAR = 21  # kg CO2 absorbed per tree per year
 TREES_PER_OFFSET_CREDIT = 1000 / CO2_PER_TREE_PER_YEAR  # ~47.6 trees per 1000kg CO2

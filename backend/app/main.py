@@ -182,23 +182,89 @@ def footprint_history(current_user: models.User = Depends(auth.get_current_user)
     return result
 
 @app.post('/simulate_meat_replacement')
-def simulate_meat_replacement(meat_meals_per_week: int, weeks: int = 52):
+def simulate_meat_replacement(request: schemas.MeatReplacementRequest):
     """
     Simulate replacing meat meals with plant-based alternatives.
     """
     try:
-        result = simulator.simulate_meat_replacement(meat_meals_per_week, weeks)
+        result = simulator.simulate_meat_replacement(request.meat_meals_per_week, request.weeks)
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post('/simulate_transport_switch')
-def simulate_transport_switch(trips_per_year: int, distance_per_trip_km: float, from_mode: str = 'flight', to_mode: str = 'train'):
+def simulate_transport_switch(request: schemas.TransportSwitchRequest):
     """
     Simulate switching from one transport mode to another.
     """
     try:
-        result = simulator.simulate_transport_switch(trips_per_year, distance_per_trip_km, from_mode, to_mode)
+        result = simulator.simulate_transport_switch(
+            request.trips_per_year,
+            request.distance_per_trip_km,
+            request.from_mode,
+            request.to_mode
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post('/simulate_energy_efficiency')
+def simulate_energy_efficiency(request: schemas.EnergyEfficiencyRequest):
+    """
+    Simulate switching from incandescent to LED bulbs.
+    """
+    try:
+        result = simulator.simulate_energy_efficiency(
+            request.current_bulbs,
+            request.led_bulbs,
+            request.hours_per_day,
+            request.days_per_year
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post('/simulate_electric_vehicle')
+def simulate_electric_vehicle(request: schemas.ElectricVehicleRequest):
+    """
+    Simulate switching from gasoline car to electric vehicle.
+    """
+    try:
+        result = simulator.simulate_electric_vehicle(
+            request.annual_km,
+            request.current_fuel_efficiency,
+            request.ev_efficiency
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post('/simulate_local_food')
+def simulate_local_food(request: schemas.LocalFoodRequest):
+    """
+    Simulate choosing local/seasonal food over imported food.
+    """
+    try:
+        result = simulator.simulate_local_food(
+            request.imported_meals_per_week,
+            request.local_reduction_percent,
+            request.weeks
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post('/simulate_waste_reduction')
+def simulate_waste_reduction(request: schemas.WasteReductionRequest):
+    """
+    Simulate reducing food waste.
+    """
+    try:
+        result = simulator.simulate_waste_reduction(
+            request.current_waste_kg_per_week,
+            request.reduction_percent,
+            request.weeks
+        )
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

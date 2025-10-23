@@ -41,7 +41,6 @@ def clean_item_name(raw: str) -> str:
     text = re.sub(r'potatoes?', 'potatoes', text)
     text = re.sub(r'tomatoes?', 'tomatoes', text)
     
-    # Remove prices like 2.99, $3.50
     text = re.sub(r"\d+(\.\d{1,2})?", "", text)
     # Remove symbols
     text = re.sub(r"[^a-z\s]", "", text)
