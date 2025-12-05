@@ -1,6 +1,8 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
+import enum
+from .document_classifier import DocumentType
 
 # ------------------
 # User schemas
@@ -27,11 +29,13 @@ class ItemBase(BaseModel):
     qty: float
     unit: str
     footprint: float
+    category: Optional[str] = "food"
 
 class ReceiptBase(BaseModel):
     id: int
     user_id: int
     total_footprint: float
+    document_type: DocumentType = DocumentType.GROCERY
     items: List[ItemBase]
     date: datetime
 

@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import enum
+from .document_classifier import DocumentType
 
 Base = declarative_base()
 
@@ -19,6 +21,7 @@ class Receipt(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     total_footprint = Column(Float)
+    document_type = Column(String, default="grocery")
     date = Column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", back_populates="receipts")
@@ -33,6 +36,7 @@ class Item(Base):
     qty = Column(Float)
     unit = Column(String)
     footprint = Column(Float)
+    category = Column(String, default="food")  # food, transport, energy, utility, etc.
 
     receipt = relationship("Receipt", back_populates="items")
 

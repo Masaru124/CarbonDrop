@@ -31,48 +31,119 @@ class FootprintMatcher:
         return results, round(total, 4)
 
 def load_dataset(csv_path):
+    """Load the comprehensive multi-domain emission dataset."""
     if not os.path.exists(csv_path):
-        raise FileNotFoundError(f'Dataset not found: {csv_path}')
+        # Try fallback paths in order of preference
+        fallback_paths = [
+            os.path.join(os.path.dirname(csv_path), 'defra_enhanced_emissions.csv'),
+            os.path.join(os.path.dirname(csv_path), 'combined_food_emissions.csv'),
+            os.path.join(os.path.dirname(csv_path), 'greenhouse-gas-emissions-per-kilogram-of-food-product.csv')
+        ]
+
+        for fallback in fallback_paths:
+            if os.path.exists(fallback):
+                print(f"Using fallback dataset: {fallback}")
+                csv_path = fallback
+                break
+        else:
+            raise FileNotFoundError(f'No dataset found in any of the expected locations')
 
     # Load the dataset
     df = pd.read_csv(csv_path)
 
-    # Check if this is the greenhouse gas emissions dataset by looking at column names
-    if 'Entity' in df.columns and 'GHG emissions per kilogram (Poore & Nemecek, 2018)' in df.columns:
-        # Transform the greenhouse gas emissions dataset to match expected structure
-        df = df.rename(columns={
-            'Entity': 'item',
-            'GHG emissions per kilogram (Poore & Nemecek, 2018)': 'co2'
-        })
-        # Add unit column (all items are per kilogram in this dataset)
-        df['unit'] = 'kg'
-        # Drop the Year column as it's not needed
-        df = df.drop(columns=['Year'])
-    elif 'food_item' in df.columns and 'emissions_kg_co2_per_kg' in df.columns:
-        # Handle combined_food_emissions.csv structure
-        df = df.rename(columns={
-            'food_item': 'item',
-            'emissions_kg_co2_per_kg': 'co2'
-        })
-        df['unit'] = 'kg'
-        # Clean 'item' column by trimming whitespace
-        df['item'] = df['item'].astype(str).str.strip()
-    else:
-        # Handle the original footprint dataset structure
-        df['item'] = df['item'].astype(str).str.strip()
+    print(f"Loaded dataset from {csv_path}")
+    print(f"Dataset shape: {df.shape}")
+    print(f"Columns: {list(df.columns)}")
 
-    # Ensure item names are stripped of whitespace
-    df['item'] = df['item'].astype(str).str.strip()
-    return df
+    # Check if this is the comprehensive multi-domain dataset
+    if 'item' in df.columns and 'co2' in df.columns and 'category' in df.columns:
+        print("✅ Comprehensive multi-domain dataset detected")
+        # Already in the correct format
+        df['item'] = df['item'].astype(str).str.strip()
+        return df
+
+    # Handle legacy food-only datasets
+    print("📦 Legacy food dataset detected, converting to multi-domain format...")
+
+    # Try to identify the correct columns
+    item_col = None
+    emission_col = None
+
+    for col in df.columns:
+        col_lower = col.lower()
+        if any(keyword in col_lower for keyword in ['item', 'product', 'food', 'name']) and item_col is None:
+            item_col = col
+        if any(keyword in col_lower for keyword in ['emission', 'co2', 'footprint', 'carbon']) and emission_col is None:
+            emission_col = col
+
+    if item_col and emission_col:
+        # Convert to standard format
+        df = df.rename(columns={
+            item_col: 'item',
+            emission_col: 'co2'
+        })
+
+        # Add missing columns
+        df['unit'] = 'kg'  # Default unit
+        df['category'] = 'food'  # Default category
+        df['source'] = 'Legacy Dataset'
+
+        # Clean data
+        df['item'] = df['item'].astype(str).str.strip()
+        df = df.dropna(subset=['co2'])
+        df = df[df['co2'] > 0]
+
+        print(f"✅ Converted legacy dataset: {len(df)} items")
+        return df
+    else:
+        raise ValueError(f"Could not identify item and emission columns in dataset. Available columns: {list(df.columns)}")
 
 class WhatIfSimulator:
     def __init__(self, dataset_df):
         self.df = dataset_df.copy()
-        # Define transport emission factors (kg CO2e per km)
+
+        # Enhanced transport emission factors from DEFRA
         self.transport_factors = {
-            'flight': 0.25,  # kg CO2e per km for short flights
-            'train': 0.04    # kg CO2e per km for train
+            'flight': 0.25,  # kg CO2e per km for short flights (average)
+            'train': 0.04,   # kg CO2e per km for train (average)
+            'bus': 0.08,     # kg CO2e per km for bus
+            'car': 0.17,     # kg CO2e per km for average car
+            'taxi': 0.17,    # kg CO2e per km for taxi
+            'electric_car': 0.054,  # kg CO2e per km for electric car
         }
+
+        # Enhanced energy factors from DEFRA
+        self.energy_factors = {
+            'electricity': 0.207,  # kg CO2e per kWh
+            'natural_gas': 0.184,  # kg CO2e per kWh
+            'gas': 0.184,          # kg CO2e per kWh
+            'fuel_oil': 0.246,     # kg CO2e per kWh
+            'lpg': 0.215,          # kg CO2e per kWh
+            'coal': 0.345,         # kg CO2e per kWh
+        }
+
+        # Water factors
+        self.water_factors = {
+            'water': 0.0013,  # kg CO2e per liter (supply + treatment)
+        }
+
+    def _get_emission_factor(self, item_name, category='food'):
+        """Get emission factor from the dataset."""
+        # Look for exact match first
+        matches = self.df[(self.df['item'].str.lower() == item_name.lower()) &
+                         (self.df['category'] == category)]
+
+        if not matches.empty:
+            return float(matches.iloc[0]['co2'])
+
+        # Look for partial matches
+        matches = self.df[self.df['item'].str.lower().str.contains(item_name.lower()) &
+                         (self.df['category'] == category)]
+
+        if not matches.empty:
+            return float(matches.iloc[0]['co2'])
+
+        return None
 
     def simulate_meat_replacement(self, meat_meals_per_week, weeks=52):
         """
@@ -80,19 +151,19 @@ class WhatIfSimulator:
         Assumes average meat meal is 200g beef, replaced with 200g lentils.
         """
         # Get CO2 for beef (meat)
-        beef_row = self.df[self.df['item'].str.lower() == 'beef']
-        if beef_row.empty:
+        beef_co2 = self._get_emission_factor('beef', 'food')
+        if beef_co2 is None:
             beef_co2 = 27.0  # Default value from dataset
-        else:
-            beef_co2 = float(beef_row['co2'].iloc[0])
 
-        # Assume plant-based replacement (lentils or similar)
-        plant_based_co2 = 0.9  # kg CO2e per kg for lentils/beans
+        # Get CO2 for plant-based alternative (lentils)
+        lentils_co2 = self._get_emission_factor('lentils', 'food')
+        if lentils_co2 is None:
+            lentils_co2 = 0.9  # Default value for lentils
 
         # Calculate weekly savings
         meat_per_meal = 0.2  # kg
         weekly_meat_co2 = meat_meals_per_week * meat_per_meal * beef_co2
-        weekly_plant_co2 = meat_meals_per_week * meat_per_meal * plant_based_co2
+        weekly_plant_co2 = meat_meals_per_week * meat_per_meal * lentils_co2
         weekly_savings = weekly_meat_co2 - weekly_plant_co2
 
         # Annual savings

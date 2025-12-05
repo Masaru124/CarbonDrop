@@ -25,32 +25,71 @@ def preprocess_image_bytes(image_bytes: bytes):
     return Image.fromarray(th)
 
 def clean_item_name(raw: str) -> str:
+    """Enhanced item name cleaning with better normalization."""
     text = raw.lower().strip()
-    
-    # Common OCR typo corrections
-    text = re.sub(r'mi1k', 'milk', text)
-    text = re.sub(r'eggs?', 'eggs', text)
-    text = re.sub(r'bread', 'bread', text)
-    text = re.sub(r'chicken', 'chicken', text)
-    text = re.sub(r'coffee', 'coffee', text)
-    text = re.sub(r'beef', 'beef', text)
-    text = re.sub(r'pork', 'pork', text)
-    text = re.sub(r'fish', 'fish', text)
-    text = re.sub(r'cheese', 'cheese', text)
-    text = re.sub(r'rice', 'rice', text)
-    text = re.sub(r'potatoes?', 'potatoes', text)
-    text = re.sub(r'tomatoes?', 'tomatoes', text)
-    
-    text = re.sub(r"\d+(\.\d{1,2})?", "", text)
-    # Remove symbols
-    text = re.sub(r"[^a-z\s]", "", text)
-    # Normalize spacing
-    text = re.sub(r"\s+", " ", text).strip()
-    
+
+    # Remove common OCR artifacts and noise
+    text = re.sub(r'[^\w\s\-.,]', ' ', text)  # Replace non-alphanumeric with spaces
+    text = re.sub(r'\s+', ' ', text)  # Normalize whitespace
+
+    # Common OCR typo corrections and standardizations
+    corrections = {
+        # Common OCR errors
+        'mi1k': 'milk', 'mil': 'milk', 'mik': 'milk',
+        'brea': 'bread', 'bre': 'bread',
+        'chic': 'chicken', 'chick': 'chicken', 'chi': 'chicken',
+        'chee': 'cheese', 'ches': 'cheese',
+        'toma': 'tomato', 'tomat': 'tomato',
+        'pota': 'potato', 'potat': 'potato',
+        'appl': 'apple', 'app': 'apple',
+        'bana': 'banana', 'ban': 'banana',
+        'eggi': 'eggs', 'egg': 'eggs',
+        'beef': 'beef', 'bee': 'beef',
+        'rice': 'rice', 'ric': 'rice',
+        'past': 'pasta', 'pas': 'pasta',
+
+        # Common variations and abbreviations
+        'whole milk': 'milk', 'semi skimmed': 'milk', 'skim milk': 'milk',
+        'white bread': 'bread', 'brown bread': 'bread', 'wholemeal': 'bread',
+        'free range eggs': 'eggs', 'large eggs': 'eggs', 'medium eggs': 'eggs',
+        'chicken breast': 'chicken', 'chicken thigh': 'chicken',
+        'ground beef': 'beef', 'minced beef': 'beef', 'steak': 'beef',
+        'cheddar cheese': 'cheese', 'mozzarella': 'cheese', 'parmesan': 'cheese',
+        'cherry tomato': 'tomato', 'plum tomato': 'tomato',
+        'baking potato': 'potato', 'new potato': 'potato',
+        'braeburn apple': 'apple', 'granny smith': 'apple', 'gala apple': 'apple',
+        'fairtrade banana': 'banana',
+        'white rice': 'rice', 'brown rice': 'rice', 'basmati': 'rice', 'jasmine rice': 'rice',
+        'spaghetti': 'pasta', 'penne': 'pasta', 'fusilli': 'pasta', 'macaroni': 'pasta',
+
+        # Units and quantities (remove these)
+        'kg': '', 'kilo': '', 'kilogram': '', 'kilograms': '',
+        'g': '', 'gram': '', 'grams': '',
+        'l': '', 'liter': '', 'litre': '', 'liters': '', 'litres': '',
+        'ml': '', 'milliliter': '', 'millilitre': '', 'milliliters': '', 'millilitres': '',
+        'lb': '', 'lbs': '', 'pound': '', 'pounds': '',
+        'oz': '', 'ounce': '', 'ounces': '',
+        'pack': '', 'packet': '', 'pack of': '', 'pk': '',
+        'pc': '', 'piece': '', 'pieces': '', 'pcs': '',
+        'ea': '', 'each': '', 'item': '',
+    }
+
+    # Apply corrections
+    for wrong, correct in corrections.items():
+        text = re.sub(r'\b' + re.escape(wrong) + r'\b', correct, text)
+
+    # Remove numbers and units that weren't caught above
+    text = re.sub(r'\d+(\.\d+)?', '', text)  # Remove numbers
+    text = re.sub(r'\b(?:kg|g|lb|oz|l|ml|liter|gram|pound|ounce|pack|piece|item|each)\b', '', text)
+
+    # Clean up extra spaces and normalize
+    text = re.sub(r'\s+', ' ', text).strip()
+
     # Skip if it's a total/subtotal keyword
-    if text in ['total', 'subtotal', 'tax', 'vat', 'change', 'cash', 'card', 'balance', 'pay', 'amount', 'discount']:
+    skip_keywords = ['total', 'subtotal', 'tax', 'vat', 'change', 'cash', 'card', 'balance', 'pay', 'amount', 'discount', 'tip', 'service', 'gratuity']
+    if text in skip_keywords:
         return ""
-    
+
     return text.capitalize()
 
 def _reconstruct_lines(img):
@@ -69,45 +108,153 @@ def _reconstruct_lines(img):
     return lines
 
 def _parse_line(line: str):
+    """Enhanced line parsing with better price and quantity detection."""
     raw = line.strip()
     if not raw:
         return None
+
+    # Skip non-item lines more aggressively
     up = re.sub(r'[^A-Z ]+', '', raw.upper())
-    if any(k in up for k in IGNORE_KEYWORDS):
+    extended_skip_keywords = {
+        'TOTAL','SUBTOTAL','SUB-TOTAL','TAX','VAT','CHANGE','CASH','CARD','BALANCE','PAY',
+        'AMOUNT','DISCOUNT','TIP','SERVICE','GRATUITY','TABLE','SEAT','SERVER','BILL',
+        'INVOICE','RECEIPT','THANK','YOU','WELCOME','CUSTOMER','GUEST','ORDER','ITEM',
+        'QTY','QUANTITY','PRICE','UNIT','RATE','DESCRIPTION','PRODUCT','NAME','NUMBER'
+    }
+
+    if any(k in up for k in extended_skip_keywords):
         return None
-    m = PRICE_RE_END.search(raw)
-    if not m:
+
+    # Enhanced price regex patterns
+    price_patterns = [
+        r'(\d{1,5}(?:[\.,]\d{2})?)\s*(?:$|[€£$]|EUR|USD|GBP)',  # Price at end
+        r'(?:€|£|\$|EUR|USD|GBP)\s*(\d{1,5}(?:[\.,]\d{2})?)',    # Currency at start
+        r'(\d{1,5}(?:[\.,]\d{2})?)\s*(?:€|£|\$)',                # Price with currency
+    ]
+
+    price = None
+    for pattern in price_patterns:
+        m = re.search(pattern, raw)
+        if m:
+            price_str = m.group(1).replace(',', '.')
+            try:
+                price = float(price_str)
+                break
+            except:
+                continue
+
+    if not price:
         return None
-    price_str = m.group(1).replace(',', '.')
-    try:
-        price = float(price_str)
-    except:
-        return None
-    name = clean_item_name(raw[:m.start()].strip(' -:'))
+
+    # Extract item name (everything before the price)
+    name_part = raw[:raw.find(m.group(0))].strip(' -:')
+
+    # Enhanced quantity detection
+    qty_patterns = [
+        r'^(\d+)\s*[xX]\s*',  # 2x, 3x format
+        r'(\d+)\s*(?:pcs?|PK|pack|pieces?|items?)',  # 2 pcs, 3 pack
+        r'\((\d+)\)',  # (2) format
+        r'qty[:\s]*(\d+)',  # qty: 2 format
+        r'quantity[:\s]*(\d+)',  # quantity: 2 format
+    ]
+
+    qty = 1
+    for pattern in qty_patterns:
+        q_match = re.search(pattern, raw, re.IGNORECASE)
+        if q_match:
+            try:
+                qty = int(q_match.group(1))
+                break
+            except:
+                continue
+
+    # Clean the item name
+    name = clean_item_name(name_part)
     if not name or len(name) < 2:
         return None
-    qty = 1
-    q = QTY_X_RE.search(raw) or QTY_PCS_RE.search(raw)
-    if q:
-        try:
-            qty = int(q.group(1))
-        except:
-            qty = 1
-    return {'name': name, 'qty': qty, 'raw_line': raw, 'price': price}
+
+    # Additional validation - skip if name is too short or looks like a code
+    if len(name) < 2 or re.match(r'^[A-Z0-9]{1,3}$', name.upper()):
+        return None
+
+    return {
+        'name': name,
+        'qty': qty,
+        'raw_line': raw,
+        'price': price,
+        'confidence': 'high' if qty > 1 else 'medium'
+    }
 
 def extract_items_from_image(image_bytes: bytes):
-    img = preprocess_image_bytes(image_bytes)
-    lines = _reconstruct_lines(img)
+    """Enhanced item extraction with multiple OCR strategies."""
     items = []
-    for ln in lines:
-        it = _parse_line(ln)
-        if it:
-            items.append(it)
-    if not items:
-        cfg = '--oem 3 --psm 6'
-        text = pytesseract.image_to_string(img, lang='eng', config=cfg)
-        for line in text.splitlines():
-            it = _parse_line(line)
-            if it:
-                items.append(it)
-    return items
+
+    # Try multiple preprocessing and OCR configurations
+    configurations = [
+        {'preprocess': True, 'config': '--oem 3 --psm 6', 'lang': 'eng'},
+        {'preprocess': True, 'config': '--oem 3 --psm 3', 'lang': 'eng'},  # Better for uniform text
+        {'preprocess': False, 'config': '--oem 3 --psm 6', 'lang': 'eng'},  # No preprocessing
+        {'preprocess': True, 'config': '--oem 1 --psm 6', 'lang': 'eng'},  # Neural nets OCR
+    ]
+
+    for config in configurations:
+        try:
+            if config['preprocess']:
+                img = preprocess_image_bytes(image_bytes)
+            else:
+                img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+
+            # Try structured text extraction first
+            lines = _reconstruct_lines_enhanced(img, config['config'], config['lang'])
+            for ln in lines:
+                it = _parse_line(ln)
+                if it and it['name'] not in [item['name'] for item in items]:
+                    items.append(it)
+
+            # If no items found with structured extraction, try full text extraction
+            if not items:
+                text = pytesseract.image_to_string(img, lang=config['lang'], config=config['config'])
+                for line in text.splitlines():
+                    it = _parse_line(line)
+                    if it and it['name'] not in [item['name'] for item in items]:
+                        items.append(it)
+
+        except Exception as e:
+            print(f"OCR configuration {config} failed: {e}")
+            continue
+
+    # Remove duplicates and sort by confidence
+    unique_items = []
+    seen_names = set()
+
+    for item in items:
+        name = item['name'].lower()
+        if name not in seen_names:
+            unique_items.append(item)
+            seen_names.add(name)
+
+    # Sort by confidence and price (higher price items first)
+    unique_items.sort(key=lambda x: (x.get('confidence', 'low'), x.get('price', 0)), reverse=True)
+
+    return unique_items[:20]  # Return top 20 items
+
+def _reconstruct_lines_enhanced(img, config, lang):
+    """Enhanced line reconstruction with better text grouping."""
+    df = pytesseract.image_to_data(img, output_type=Output.DATAFRAME, config=config, lang=lang)
+    df = df.dropna(subset=['text']).copy()
+    df = df[df['conf'] > 30]  # Lower confidence threshold
+
+    lines = []
+    if df.empty:
+        return lines
+
+    # Group by line with better logic
+    for key, group in df.groupby(['page_num','block_num','par_num','line_num']):
+        g = group.sort_values('left')
+        text = ' '.join(str(t) for t in g['text'].tolist()).strip()
+
+        # Filter out very short or meaningless text
+        if text and len(text) > 1 and not re.match(r'^[^\w]*$', text):
+            lines.append(text)
+
+    return lines

@@ -1,0 +1,35 @@
+item,co2,unit,category,source
+average car,0.17019,km,transport,DEFRA 2024
+small car,0.13544,km,transport,DEFRA 2024
+medium car,0.17019,km,transport,DEFRA 2024
+large car,0.22005,km,transport,DEFRA 2024
+average car petrol,0.17708,km,transport,DEFRA 2024
+average car diesel,0.1649,km,transport,DEFRA 2024
+local bus,0.10335,km,transport,DEFRA 2024
+coach,0.02742,km,transport,DEFRA 2024
+national rail,0.03641,km,transport,DEFRA 2024
+light rail,0.05266,km,transport,DEFRA 2024
+london underground,0.02742,km,transport,DEFRA 2024
+taxi regular,0.17708,km,transport,DEFRA 2024
+taxi black cab,0.22005,km,transport,DEFRA 2024
+domestic flight,0.25474,km,transport,DEFRA 2024
+short haul flight,0.15284,km,transport,DEFRA 2024
+long haul flight,0.19545,km,transport,DEFRA 2024
+electric car,0.05443,km,transport,DEFRA 2024
+electric van,0.07552,km,transport,DEFRA 2024
+electricity,0.20707,kwh,energy,DEFRA 2024
+uk electricity,0.20707,kwh,energy,DEFRA 2024
+grid electricity,0.20707,kwh,energy,DEFRA 2024
+natural gas,0.18385,kwh,energy,DEFRA 2024
+gas,0.18385,kwh,energy,DEFRA 2024
+natural gas therm,5.30084,therm,energy,DEFRA 2024
+fuel oil,0.24551,kwh,energy,DEFRA 2024
+heating oil,0.24551,kwh,energy,DEFRA 2024
+kerosene,0.24781,kwh,energy,DEFRA 2024
+lpg,0.21476,kwh,energy,DEFRA 2024
+propane,0.21476,kwh,energy,DEFRA 2024
+coal,0.34485,kwh,energy,DEFRA 2024
+house coal,0.34485,kwh,energy,DEFRA 2024
+water supply,0.00059,liter,utility,DEFRA 2024
+water treatment,0.00071,liter,utility,DEFRA 2024
+water,0.0013,liter,utility,DEFRA 2024

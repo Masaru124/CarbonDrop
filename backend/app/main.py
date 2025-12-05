@@ -5,7 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .ocr import extract_items_from_image
-from .footprint import FootprintMatcher, WhatIfSimulator, load_dataset, calculate_offset_from_trees, get_gamification_badge, calculate_trees_needed, calculate_eco_credits, get_credits_needed_for_tree
+from .parsers import document_parser
+from .enhanced_footprint import EnhancedFootprintMatcher
+from .footprint import load_dataset, calculate_offset_from_trees, get_gamification_badge, calculate_trees_needed, calculate_eco_credits, get_credits_needed_for_tree, WhatIfSimulator
 from .utils import normalize_quantity
 from datetime import datetime
 from . import auth, report
@@ -18,7 +20,7 @@ models.Base.metadata.create_all(bind=database.engine)
 app = FastAPI(title='EcoBasket API')
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
 
-matcher = FootprintMatcher(load_dataset(database.DATASET_PATH))
+matcher = EnhancedFootprintMatcher(load_dataset(database.DATASET_PATH))
 simulator = WhatIfSimulator(load_dataset(database.DATASET_PATH))
 
 @app.post('/upload_receipt', response_model=schemas.ReceiptBase)
@@ -26,7 +28,11 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
     contents = await file.read()
 
     try:
-        items_raw = extract_items_from_image(contents)
+        # Use the new document parser system
+        parsed_data = document_parser.parse_document(contents)
+        items_raw = parsed_data['items']
+        document_type = parsed_data['document_type']
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'OCR failed: {e}')
 
@@ -34,12 +40,23 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
     items = []
     for it in items_raw:
         qty_kg, _ = normalize_quantity(f"{it.get('qty', 1)} {it.get('name', '')}")
-        items.append({'name': it.get('name', ''), 'qty': qty_kg})
+        category = it.get('category', 'food')  # Default to food for backward compatibility
+        items.append({
+            'name': it.get('name', ''),
+            'qty': qty_kg,
+            'category': category,
+            'unit': it.get('unit', 'kg')
+        })
 
     results, total = matcher.match_and_compute(items)
 
     # Create receipt and items in DB linked to current user
-    receipt = models.Receipt(user_id=current_user.id, total_footprint=total, date=datetime.utcnow())
+    receipt = models.Receipt(
+        user_id=current_user.id,
+        total_footprint=total,
+        document_type=models.DocumentType(document_type),
+        date=datetime.utcnow()
+    )
     db.add(receipt)
     db.commit()
     db.refresh(receipt)
@@ -51,7 +68,8 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
             matched_name=item['matched_name'],
             qty=item['qty'],
             unit=item['unit'],
-            footprint=item['footprint']
+            footprint=item['footprint'],
+            category=item.get('category', 'food')
         )
         db.add(db_item)
     db.commit()
@@ -69,12 +87,14 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
         id=receipt.id,
         user_id=receipt.user_id,
         total_footprint=receipt.total_footprint,
+        document_type=schemas.DocumentType(receipt.document_type.value),
         items=[schemas.ItemBase(
             name=i.name,
             matched_name=i.matched_name or "",
             qty=i.qty,
             unit=i.unit or "",
-            footprint=i.footprint
+            footprint=i.footprint,
+            category=getattr(i, 'category', 'food')
         ) for i in receipt_items],
         date=receipt.date
     )
@@ -169,12 +189,14 @@ def footprint_history(current_user: models.User = Depends(auth.get_current_user)
             id=receipt.id,
             user_id=receipt.user_id,
             total_footprint=receipt.total_footprint,
+            document_type=schemas.DocumentType(receipt.document_type.value),
             items=[schemas.ItemBase(
                 name=i.name,
                 matched_name=i.matched_name or "",
                 qty=i.qty,
                 unit=i.unit or "",
-                footprint=i.footprint
+                footprint=i.footprint,
+                category=getattr(i, 'category', 'food')
             ) for i in items],
             date=receipt.date
         )

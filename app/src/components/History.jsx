@@ -62,9 +62,14 @@ const History = () => {
                 className="p-4 border rounded shadow-sm bg-[#121212] hover:bg-gray-700 transition"
               >
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-100">
-                    {new Date(h.date).toLocaleString()}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-gray-100">
+                      {new Date(h.date).toLocaleString()}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      📄 {h.document_type.charAt(0).toUpperCase() + h.document_type.slice(1)} • {h.items.length} items
+                    </span>
+                  </div>
                   <span className="text-lg font-medium text-green-600">
                     {h.total_footprint} kg CO₂
                   </span>
