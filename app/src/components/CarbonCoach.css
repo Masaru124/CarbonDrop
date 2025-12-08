@@ -1,0 +1,181 @@
+/* Carbon Coach Component Styles */
+
+.carbon-coach-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
+}
+
+.carbon-coach-card.loading,
+.carbon-coach-card.error {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.carbon-coach-card h2 {
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+.week-overview {
+  margin-bottom: 2rem;
+}
+
+.week-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.week-dates {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.budget-targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.budget-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.budget-item label {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.budget-item .target,
+.budget-item .historical {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0;
+}
+
+.progress-bar-container {
+  margin: 1.5rem 0;
+}
+
+.progress-bar-container label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50 0%, #45a049 100%);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+  min-width: 2%;
+}
+
+.progress-fill.yellow {
+  background: linear-gradient(90deg, #ffc107 0%, #ffb300 100%);
+}
+
+.progress-fill.red {
+  background: linear-gradient(90deg, #f44336 0%, #e53935 100%);
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 0;
+  text-align: right;
+}
+
+.tradeoffs-section {
+  margin: 2rem 0;
+}
+
+.tradeoffs-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.tradeoffs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tradeoff-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.coach-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  text-align: center;
+}
+
+.coach-message p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.coach-message .positive {
+  color: #c8e6c9;
+}
+
+.coach-message .neutral {
+  color: #fff3cd;
+}
+
+.coach-message .warning {
+  color: #ffccbc;
+}
+
+.coach-message .alert {
+  color: #ef9a9a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carbon-coach-card {
+    padding: 1.5rem;
+  }
+
+  .carbon-coach-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .budget-targets {
+    grid-template-columns: 1fr;
+  }
+}

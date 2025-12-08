@@ -36,6 +36,9 @@ export function Navbar() {
         <Link to="/dashboard" className="hover:text-green-400 transition">
           Dashboard
         </Link>
+        <Link to="/carbon-insights" className="hover:text-green-400 transition">
+          Carbon AI
+        </Link>
         <Link to="/simulator" className="hover:text-green-400 transition">
           Simulator
         </Link>
@@ -102,6 +105,13 @@ export function Navbar() {
             onClick={() => setMenuOpen(false)}
           >
             Dashboard
+          </Link>
+          <Link
+            to="/carbon-insights"
+            className="hover:text-green-400 transition"
+            onClick={() => setMenuOpen(false)}
+          >
+            Carbon AI
           </Link>
           <Link
             to="/simulator"

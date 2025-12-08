@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Tuple
 from datetime import datetime
 import enum
 from .document_classifier import DocumentType
@@ -83,3 +83,128 @@ class TransportSwitchRequest(BaseModel):
     distance_per_trip_km: float
     from_mode: str = "flight"
     to_mode: str = "train"
+
+
+# ============================================================================
+# CARBON BUDGETING AI SCHEMAS
+# ============================================================================
+
+class CategoryAnalysisSchema(BaseModel):
+    """Emission breakdown by category"""
+    category: str
+    total_kg: float
+    percentage: float
+    item_count: int
+    avg_per_item: float
+
+
+class CarbonInsightsResponse(BaseModel):
+    """Response for /api/carbon/insights"""
+    summary: str
+    total_footprint_kg: float
+    period: str
+    average_daily_kg: float
+    category_breakdown: List[CategoryAnalysisSchema]
+    top_5_sources: List[Dict]
+    recurring_patterns: List[Dict]
+
+
+class ForecastDataSchema(BaseModel):
+    """Single day forecast"""
+    date: str
+    predicted_kg: float
+    confidence_interval: Tuple[float, float]
+    trend: str
+
+
+class CarbonForecastResponse(BaseModel):
+    """Response for /api/carbon/forecast"""
+    forecast_days: int
+    forecasts: List[ForecastDataSchema]
+    summary: str
+    risk_level: str  # low, medium, high
+
+
+class SimulationChangeRequest(BaseModel):
+    """Request for /api/carbon/simulate"""
+    change_type: str  # "diet", "commute", "shopping", "energy"
+    parameters: Dict
+
+
+class SimulationResultSchema(BaseModel):
+    """Result of simulation"""
+    change_description: str
+    estimated_reduction_kg: float
+    estimated_reduction_percent: float
+    annual_impact_kg: float
+    affected_categories: List[str]
+
+
+class TradeoffSuggestionSchema(BaseModel):
+    """Practical tradeoff suggestion"""
+    suggestion: str
+
+
+class WeeklyCarbonBudgetSchema(BaseModel):
+    """Response for /api/carbon/coach"""
+    week_start_date: str
+    week_end_date: str
+    recommended_weekly_limit_kg: float
+    recommended_daily_limit_kg: float
+    historical_weekly_avg: float
+    progress_percent: Optional[float]
+    tradeoff_suggestions: List[str]
+
+
+class RecipeSuggestionSchema(BaseModel):
+    """Low-carbon recipe"""
+    name: str
+    carbon_footprint_kg: float
+    protein_g: float
+    prep_time_minutes: int
+    ingredients: List[str]
+    savings_vs_typical_kg: float
+
+
+class CommuteOptionSchema(BaseModel):
+    """Alternative commute option"""
+    mode: str
+    annual_carbon_kg: float
+    cost_per_month: float
+    time_per_day_minutes: int
+    feasibility_score: float
+
+
+class SubscriptionToReplaceSchema(BaseModel):
+    """Recurring purchase to replace"""
+    item_name: str
+    frequency: str
+    annual_carbon_kg: float
+    alternative: str
+    potential_savings_kg: float
+
+
+class DailyPlanActionSchema(BaseModel):
+    """Single day's action"""
+    day: int
+    focus_area: str
+    action: str
+    carbon_saved_vs_typical_kg: Optional[float]
+    difficulty_level: str
+
+
+class ThirtyDayPlanSchema(BaseModel):
+    """Response for /api/carbon/plan/30-day"""
+    start_date: str
+    end_date: str
+    current_weekly_avg_kg: float
+    target_weekly_avg_kg: float
+    total_potential_savings_kg: float
+    summary: str
+    problem_areas: List[CategoryAnalysisSchema]
+    improvement_checklist: List[str]
+    recipes: List[RecipeSuggestionSchema]
+    commute_alternatives: List[CommuteOptionSchema]
+    habit_changes: List[str]
+    subscriptions_to_replace: List[SubscriptionToReplaceSchema]
+    daily_plan: List[DailyPlanActionSchema]

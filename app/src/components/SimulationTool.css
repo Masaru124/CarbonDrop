@@ -1,0 +1,294 @@
+/* Simulation Tool Component Styles */
+
+.simulation-tool {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.simulation-tool h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.6rem;
+  color: #333;
+  font-weight: 700;
+}
+
+.description {
+  color: #666;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.simulator-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.left-panel h3,
+.right-panel h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.change-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-button {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.option-button:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.option-button.active {
+  border-color: #667eea;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  color: #667eea;
+}
+
+.option-label {
+  display: block;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.option-desc {
+  display: block;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.option-button.active .option-desc {
+  color: #667eea;
+}
+
+.parameter-inputs {
+  margin-bottom: 1.5rem;
+}
+
+.parameter-inputs label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.parameter-inputs input[type="range"],
+.parameter-inputs select {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.parameter-inputs input[type="range"] {
+  cursor: pointer;
+}
+
+.parameter-inputs span {
+  min-width: 60px;
+  text-align: right;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.parameter-help {
+  font-size: 0.85rem;
+  color: #999;
+  margin: -1rem 0 1rem 0;
+  font-style: italic;
+}
+
+.simulate-button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.simulate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.simulate-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.results-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+}
+
+.results-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2e7d32;
+  font-size: 1.05rem;
+}
+
+.impact-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.impact-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+
+.impact-card label {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.impact-card .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.impact-card .percent {
+  font-size: 0.9rem;
+  color: #4caf50;
+  margin: 0.25rem 0 0 0;
+}
+
+.change-details {
+  margin-bottom: 1.5rem;
+}
+
+.change-details h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.affected-categories {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.comparison {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.comparison h4 {
+  margin: 0 0 0.75rem 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.comparison ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comparison li {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.comparison li:last-child {
+  border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .simulator-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .simulation-tool {
+    padding: 1.5rem;
+  }
+
+  .simulation-tool h2 {
+    font-size: 1.3rem;
+  }
+
+  .parameter-inputs label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .parameter-inputs input[type="range"],
+  .parameter-inputs select {
+    width: 100%;
+  }
+
+  .parameter-inputs span {
+    width: 100%;
+    text-align: left;
+  }
+
+  .impact-cards {
+    grid-template-columns: 1fr;
+  }
+}
