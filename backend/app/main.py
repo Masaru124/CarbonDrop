@@ -92,7 +92,9 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
             qty=item['qty'],
             unit=item['unit'],
             footprint=item['footprint'],
-            category=item.get('category', 'food')
+            category=item.get('category', 'food'),
+            match_score=item.get('match_score'),
+            co2_per_unit=item.get('co2_per_unit')
         )
         db.add(db_item)
     db.commit()
@@ -118,7 +120,9 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
             qty=i.qty,
             unit=i.unit or "",
             footprint=i.footprint,
-            category=getattr(i, 'category', 'food')
+            category=getattr(i, 'category', 'food'),
+            match_score=getattr(i, 'match_score', None),
+            co2_per_unit=getattr(i, 'co2_per_unit', None)
         ) for i in receipt_items],
         date=receipt.date
     )
@@ -220,7 +224,9 @@ def footprint_history(current_user: models.User = Depends(auth.get_current_user)
                 qty=i.qty,
                 unit=i.unit or "",
                 footprint=i.footprint,
-                category=getattr(i, 'category', 'food')
+                category=getattr(i, 'category', 'food'),
+                match_score=getattr(i, 'match_score', None),
+                co2_per_unit=getattr(i, 'co2_per_unit', None)
             ) for i in items],
             date=receipt.date
         )

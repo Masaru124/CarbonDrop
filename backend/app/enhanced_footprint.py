@@ -268,7 +268,11 @@ class EnhancedFootprintMatcher:
                                 (self.df['item'].str.lower().str.contains(fallback_key))]
                 if not matches.empty:
                     best_match = matches.iloc[0]
-                    return best_match['item'], 75, 0, best_match  # High confidence for fallback matches
+                    # Calculate actual match score instead of hardcoding
+                    match_score = fuzz.token_set_ratio(normalized_name, best_match['item'].lower())
+                    # Ensure minimum fallback score of 60 to indicate valid match
+                    match_score = max(match_score, 60)
+                    return best_match['item'], match_score, 0, best_match
 
         return None
 

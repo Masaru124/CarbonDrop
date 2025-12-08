@@ -30,6 +30,8 @@ class ItemBase(BaseModel):
     unit: str
     footprint: float
     category: Optional[str] = "food"
+    match_score: Optional[int] = None
+    co2_per_unit: Optional[float] = None
 
 class ReceiptBase(BaseModel):
     id: int

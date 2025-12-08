@@ -37,6 +37,8 @@ class Item(Base):
     unit = Column(String)
     footprint = Column(Float)
     category = Column(String, default="food")  # food, transport, energy, utility, etc.
+    match_score = Column(Integer, nullable=True)  # Fuzzy matching score (0-100)
+    co2_per_unit = Column(Float, nullable=True)  # CO2 emissions per unit
 
     receipt = relationship("Receipt", back_populates="items")
 
