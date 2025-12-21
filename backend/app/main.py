@@ -25,7 +25,33 @@ from fastapi import APIRouter
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title='EcoBasket API')
-app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
+app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)
+
+# Health check endpoint
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+# Dashboard endpoints (both with and without trailing slash)
+@app.get("/dashboard", response_model=list[schemas.DashboardEntry])
+@app.get("/dashboard/", response_model=list[schemas.DashboardEntry])
+def get_dashboard(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    try:
+        from sqlalchemy import func
+        # Get monthly totals for the current user (SQLite compatible)
+        # SQLite doesn't have to_char, so we use strftime instead
+        monthly_data = db.query(
+            func.strftime('%Y-%m', models.Receipt.date).label('month'),
+            func.sum(models.Receipt.total_footprint).label('total')
+        ).filter(models.Receipt.user_id == current_user.id).group_by(func.strftime('%Y-%m', models.Receipt.date)).all()
+
+        return [{"month": m.month, "total": round(m.total, 2)} for m in monthly_data]
+    except Exception as e:
+        print(f"Dashboard error: {e}")
+        import traceback
+        traceback.print_exc()
+        # Return empty list instead of crashing
+        return []
 
 matcher = EnhancedFootprintMatcher(load_dataset(database.DATASET_PATH))
 simulator = WhatIfSimulator(load_dataset(database.DATASET_PATH))
@@ -320,19 +346,6 @@ def simulate_waste_reduction(request: schemas.WasteReductionRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-dashboard_router = APIRouter()
-
-@dashboard_router.get("/", response_model=list[schemas.DashboardEntry])
-def get_dashboard(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    from sqlalchemy import func
-    # Get monthly totals for the current user (PostgreSQL compatible)
-    monthly_data = db.query(
-        func.to_char(models.Receipt.date, 'YYYY-MM').label('month'),
-        func.sum(models.Receipt.total_footprint).label('total')
-    ).filter(models.Receipt.user_id == current_user.id).group_by(func.to_char(models.Receipt.date, 'YYYY-MM')).all()
-
-    return [{"month": m.month, "total": round(m.total, 2)} for m in monthly_data]
 
 leaderboard_router = APIRouter()
 
@@ -806,5 +819,4 @@ def get_30day_plan(
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(report.router, prefix="/report", tags=["report"])
-app.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
 app.include_router(leaderboard_router, prefix="/leaderboard", tags=["leaderboard"])

@@ -175,7 +175,7 @@ export default function Upload({ onUploaded, onCreditsUpdated }) {
           </div>
 
           {/* Matching Performance */}
-          <div className="mb-6 p-4 bg-gray-100 rounded-lg">
+          <div className="mb-6 p-4 bg-gray-100 rounded-lg text-gray-900">
             <h4 className="text-lg font-medium mb-2">Matching Performance</h4>
             {(() => {
               const matched = result.items.filter(it => it.matched_name && it.matched_name !== 'No match').length;

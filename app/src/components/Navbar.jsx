@@ -37,7 +37,7 @@ export function Navbar() {
           Dashboard
         </Link>
         <Link to="/carbon-insights" className="hover:text-green-400 transition">
-          Carbon AI
+          Carbon
         </Link>
         <Link to="/simulator" className="hover:text-green-400 transition">
           Simulator

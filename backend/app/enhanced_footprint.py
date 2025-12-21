@@ -55,7 +55,27 @@ class EnhancedFootprintMatcher:
 
             if match_result and len(match_result) == 4:
                 matched_name, score, idx, row = match_result
-                co2_per_unit = float(row['co2'])
+                # Ensure row is a pandas Series and get the co2 value
+                try:
+                    if isinstance(row, pd.Series):
+                        co2_per_unit = float(row['co2'])
+                    else:
+                        # Fallback for unexpected types
+                        co2_per_unit = float(row.get('co2', 0) if hasattr(row, 'get') else 0)
+                except (TypeError, KeyError) as e:
+                    print(f"Error accessing co2 value from row: {row}, type: {type(row)}, error: {e}")
+                    # Skip this item if we can't get the co2 value
+                    results.append({
+                        'name': name,
+                        'matched_name': None,
+                        'match_score': 0,
+                        'qty': qty,
+                        'unit': unit,
+                        'co2_per_unit': None,
+                        'footprint': 0.0,
+                        'category': category
+                    })
+                    continue
                 item_category = category or 'food'
 
                 # Calculate footprint based on quantity and unit
@@ -92,7 +112,26 @@ class EnhancedFootprintMatcher:
                     fallback_match = self._find_fallback_match(name, category)
                     if fallback_match and len(fallback_match) == 4:
                         matched_name, score, idx, row = fallback_match
-                        co2_per_unit = float(row['co2'])
+                        try:
+                            if isinstance(row, pd.Series):
+                                co2_per_unit = float(row['co2'])
+                            else:
+                                co2_per_unit = float(row.get('co2', 0) if hasattr(row, 'get') else 0)
+                        except (TypeError, KeyError) as e:
+                            print(f"Error accessing co2 value from fallback row: {row}, type: {type(row)}, error: {e}")
+                            # Skip to unmatched case
+                            results.append({
+                                'name': name,
+                                'matched_name': None,
+                                'match_score': 0,
+                                'qty': qty,
+                                'unit': unit,
+                                'co2_per_unit': None,
+                                'footprint': 0.0,
+                                'category': category
+                            })
+                            total += 0.0
+                            continue
                         footprint = self._calculate_footprint(qty, unit, co2_per_unit, category)
 
                         results.append({
@@ -130,7 +169,9 @@ class EnhancedFootprintMatcher:
                 best = process.extractOne(name, category_items['item'], scorer=fuzz.WRatio, score_cutoff=70)
                 if best:
                     matched_name, score, idx = best
-                    return matched_name, score, 0, category_items[category_items['item'] == matched_name].iloc[0]
+                    matched_rows = category_items[category_items['item'] == matched_name]
+                    if not matched_rows.empty:
+                        return matched_name, score, 0, matched_rows.iloc[0]
 
         # Strategy 2: Normalize and clean both search term and database items
         normalized_name = self._normalize_item_name(name)
@@ -140,18 +181,18 @@ class EnhancedFootprintMatcher:
             category_items = self.df[self.df['category'] == category]
             category_matches = self._find_matches_in_subset(normalized_name, category_items)
             if category_matches:
-                return category_matches[0]
+                return category_matches
 
         # Strategy 3: For food items, look for semantic matches
         food_items = self.df[self.df['category'] == 'food']
         food_matches = self._find_matches_in_subset(normalized_name, food_items)
         if food_matches:
-            return food_matches[0]
+            return food_matches
 
         # Strategy 4: Fallback to cross-category but with higher threshold
         all_matches = self._find_matches_in_subset(normalized_name, self.df, min_score=80)
         if all_matches:
-            return all_matches[0]
+            return all_matches
 
         return None
 
@@ -203,9 +244,14 @@ class EnhancedFootprintMatcher:
                     # Additional validation: check if this makes semantic sense
                     if self._is_semantically_valid_match(search_term, matched_name, scorer.__name__ if hasattr(scorer, '__name__') else str(scorer)):
                         if score > best_score:
-                            best_match = (matched_name, score, idx, subset_df[subset_df['item'] == matched_name].iloc[0])
-                            best_score = score
-            except:
+                            # Use idx to get the row from the original DataFrame
+                            # idx is the index in the choices list, so we need to get it from subset_df
+                            matched_rows = subset_df[subset_df['item'] == matched_name]
+                            if not matched_rows.empty:
+                                best_match = (matched_name, score, idx, matched_rows.iloc[0])
+                                best_score = score
+            except Exception as e:
+                print(f"Error in matching strategy: {e}")
                 continue
 
         return best_match if best_match and len(best_match) == 4 else None

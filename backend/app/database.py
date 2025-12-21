@@ -3,17 +3,14 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, '..', 'receipts.db')
+DATASET_PATH = os.path.join(BASE_DIR, 'dataset', 'greenhouse-gas-emissions-per-kilogram-of-food-product.csv')
 
-# Use the comprehensive multi-domain emission dataset
-DATASET_PATH = os.path.join(BASE_DIR, 'dataset', 'comprehensive_emissions.csv')
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-# Fallback to enhanced dataset if comprehensive one doesn't exist
-FALLBACK_DATASET_PATH = os.path.join(BASE_DIR, 'dataset', 'defra_enhanced_emissions.csv')
-
-# Use PostgreSQL database URL from environment variable
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://neondb_owner:npg_AHFsyU0CI9TX@ep-cool-lab-adm9rvmd-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():

@@ -71,10 +71,26 @@ def load_dataset(csv_path):
 
     for col in df.columns:
         col_lower = col.lower()
-        if any(keyword in col_lower for keyword in ['item', 'product', 'food', 'name']) and item_col is None:
+        # Check for item/product column - expanded to include 'entity' as a fallback
+        if any(keyword in col_lower for keyword in ['item', 'product', 'food', 'name', 'entity']) and item_col is None:
             item_col = col
+        # Check for emission column
         if any(keyword in col_lower for keyword in ['emission', 'co2', 'footprint', 'carbon']) and emission_col is None:
             emission_col = col
+
+    # If we couldn't find an item column, use the first non-numeric column
+    if not item_col:
+        for col in df.columns:
+            if df[col].dtype == 'object' and col.lower() not in ['year', 'date']:
+                item_col = col
+                break
+
+    # If we couldn't find an emission column, use the first numeric column
+    if not emission_col:
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]) and col.lower() not in ['year', 'date']:
+                emission_col = col
+                break
 
     if item_col and emission_col:
         # Convert to standard format
