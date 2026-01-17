@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from "react";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://https://carbondrop.onrender.com:8000";
 
 // Hook for carbon insights
 export function useCarbonInsights(period = "month") {
@@ -25,7 +26,7 @@ export function useCarbonInsights(period = "month") {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -67,7 +68,7 @@ export function useCarbonForecast(days = 30) {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -244,7 +245,7 @@ export function useCarbonDashboard() {
           forecast.forecast.forecasts.length
             ? forecast.forecast.forecasts.reduce(
                 (s, d) => s + (d.predicted_kg || 0),
-                0
+                0,
               )
             : null,
       }
