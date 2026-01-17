@@ -53,7 +53,7 @@ def get_dashboard(current_user: models.User = Depends(auth.get_current_user), db
         # Return empty list instead of crashing
         return []
 
-matcher = EnhancedFootprintMatcher(load_dataset(database.DATASET_PATH))
+matcher = EnhancedFootprintMatcher()
 simulator = WhatIfSimulator(load_dataset(database.DATASET_PATH))
 
 # Initialize carbon budgeting engines
@@ -100,15 +100,6 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
     db.add(receipt)
     db.commit()
     db.refresh(receipt)
-
-    # Reset the items sequence to avoid primary key conflicts
-    try:
-        max_id = db.query(func.max(models.Item.id)).scalar()
-        if max_id:
-            db.execute(text(f"SELECT setval('items_id_seq', {max_id})"))
-            db.commit()
-    except Exception as seq_error:
-        print(f"Warning: Could not reset sequence: {seq_error}")
 
     for item in results:
         db_item = models.Item(

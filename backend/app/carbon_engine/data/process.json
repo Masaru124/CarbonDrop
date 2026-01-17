@@ -1,0 +1,7 @@
+{
+  "cutting": 0.05,
+  "welding": 0.30,
+  "casting": 1.20,
+  "machining": 0.80,
+  "assembly": 0.10
+}
