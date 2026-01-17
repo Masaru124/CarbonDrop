@@ -6,7 +6,7 @@
 import { useState, useEffect } from "react";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://https://carbondrop.onrender.com:8000";
+  import.meta.env.VITE_API_URL || "https://carbondrop.onrender.com";
 
 // Hook for carbon insights
 export function useCarbonInsights(period = "month") {
