@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -9,23 +10,24 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const res = await axios.post("http://localhost:8000/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password,
       });
+
       if (res.data && res.data.access_token) {
         localStorage.setItem("token", res.data.access_token);
-        
-        // You can redirect after login if needed
         window.location.href = "/";
       } else {
-        alert("⚠️ Login failed: No access token received");
+        alert("Login failed: No access token received");
       }
     } catch (err) {
-      alert("❌ Error: " + (err.response?.data?.detail || err.message));
+      alert("Error: " + (err.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -70,7 +72,7 @@ export default function Login() {
         </form>
 
         <p className="text-sm text-gray-400 text-center mt-6">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <a href="/register" className="text-green-400 hover:underline">
             Register
           </a>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -9,22 +10,19 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const res = await axios.post("http://localhost:8000/auth/register", {
+      const res = await axios.post(`${API_BASE_URL}/auth/register`, {
         username,
         password,
       });
-      if (res.data) {
-        alert("✅ Registration successful, now login!");
-        // Redirect if you want
-        // window.location.href = "/login";
-      } else {
-        alert("⚠️ Registration failed: No response data");
-      }
+
+      alert("Registration successful, now login!");
     } catch (err) {
-      alert("❌ Error: " + (err.response?.data?.detail || err.message));
+      alert("Error: " + (err.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
