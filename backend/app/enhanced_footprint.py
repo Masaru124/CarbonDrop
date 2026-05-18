@@ -1,14 +1,14 @@
 
+from pathlib import Path
 from typing import List, Tuple
 import math
 
 # 🔗 Import carbon estimation engines
 from .carbon_engine.pipeline import run_pipeline
-from .footprint import load_dataset
+from .footprint import estimate_food_footprint, find_best_dataset_match, load_dataset
 
 # Get the dataset path
-import os
-DATASET_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dataset", "comprehensive_emissions.csv")
+DATASET_PATH = Path(__file__).resolve().parent.parent / "dataset"
 
 
 class EnhancedFootprintMatcher:
@@ -40,9 +40,9 @@ class EnhancedFootprintMatcher:
     FOOD_CATEGORY = "food"
 
     def __init__(self):
-        """Load the food emission dataset."""
+        """Load the merged emission dataset."""
         self.food_df = load_dataset(DATASET_PATH)
-        self.food_choices = list(self.food_df['item'])
+        self.food_choices = list(self.food_df[self.food_df["category"].astype(str).str.lower() == self.FOOD_CATEGORY]['item'])
 
     # -------------------------------
     # Public API
@@ -77,28 +77,27 @@ class EnhancedFootprintMatcher:
                 )
 
             elif category == self.FOOD_CATEGORY:
-                # 🍎 Use dataset-based matching for food
-                best = process.extractOne(name, self.food_choices, scorer=fuzz.WRatio, score_cutoff=60)
+                # 🍎 Use dataset-based matching for food with a formula fallback.
+                best = find_best_dataset_match(self.food_df, name, requested_unit=unit, category=self.FOOD_CATEGORY)
                 if best:
-                    matched_name, score, idx = best
-                    row = self.food_df[self.food_df['item'] == matched_name].iloc[0]
-                    co2_per_unit = float(row['co2'])
-                    footprint = round(qty * co2_per_unit, 4)
+                    footprint = round(qty * float(best["co2_per_unit"]), 4)
                     result = self._format_result(
                         name=name,
-                        matched_name=matched_name,
-                        match_score=int(score),
+                        matched_name=best["matched_name"],
+                        match_score=int(best["match_score"]),
                         qty=qty,
                         unit=unit,
                         footprint=footprint,
                         category=category
                     )
                 else:
-                    # Fall back to pipeline if no food match
-                    footprint, confidence = self._compute_via_pipeline(name)
+                    # Fall back to a dataset-derived food formula before the raw pipeline.
+                    footprint, confidence, _ = estimate_food_footprint(self.food_df, name, qty)
+                    if footprint <= 0:
+                        footprint, confidence = self._compute_via_pipeline(name)
                     result = self._format_result(
                         name=name,
-                        matched_name="estimated_via_pipeline",
+                        matched_name=name,
                         match_score=int(confidence * 100) if confidence else 0,
                         qty=qty,
                         unit=unit,

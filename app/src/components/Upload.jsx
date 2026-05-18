@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
+import API_BASE_URL from "../config";
 
 export default function Upload({ onUploaded, onCreditsUpdated }) {
   const [file, setFile] = useState(null);
@@ -31,7 +32,7 @@ export default function Upload({ onUploaded, onCreditsUpdated }) {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/upload_receipt", {
+      const res = await fetch(`${API_BASE_URL}/upload_receipt`, {
         method: "POST",
         body: fd,
         headers: { Authorization: `Bearer ${token}` },

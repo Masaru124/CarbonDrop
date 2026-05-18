@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_BASE_URL from "../config";
 
 export default function WhatIfSimulator() {
   const [meatMeals, setMeatMeals] = useState(3);
@@ -40,7 +41,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_meat_replacement",
+        `${API_BASE_URL}/simulate_meat_replacement`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -59,7 +60,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_transport_switch",
+        `${API_BASE_URL}/simulate_transport_switch`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -83,7 +84,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_energy_efficiency",
+        `${API_BASE_URL}/simulate_energy_efficiency`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -107,7 +108,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_electric_vehicle",
+        `${API_BASE_URL}/simulate_electric_vehicle`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -130,7 +131,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_local_food",
+        `${API_BASE_URL}/simulate_local_food`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -153,7 +154,7 @@ export default function WhatIfSimulator() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/simulate_waste_reduction",
+        `${API_BASE_URL}/simulate_waste_reduction`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -181,7 +182,7 @@ export default function WhatIfSimulator() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/plant_trees", {
+      const response = await fetch(`${API_BASE_URL}/plant_trees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -209,7 +210,7 @@ export default function WhatIfSimulator() {
     if (!token) return;
 
     try {
-      const response = await fetch("http://localhost:8000/user_offsets", {
+      const response = await fetch(`${API_BASE_URL}/user_offsets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -224,7 +225,7 @@ export default function WhatIfSimulator() {
     if (!token) return;
 
     try {
-      const response = await fetch("http://localhost:8000/auth/me", {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();

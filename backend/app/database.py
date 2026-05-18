@@ -1,21 +1,20 @@
+import os
+from pathlib import Path
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-DB_PATH = os.path.join(BASE_DIR, '..', 'receipts.db')
-DATASET_PATH = os.path.join(BASE_DIR, 'dataset', 'greenhouse-gas-emissions-per-kilogram-of-food-product.csv')
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = (BASE_DIR.parent / 'carbondrop.db').resolve()
+DATASET_PATH = BASE_DIR / 'dataset'
 
-# DATABASE_URL environment variable is required
+# Use the configured database if present, otherwise fall back to local SQLite.
 DATABASE_URL = os.environ.get('DATABASE_URL')
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
-
-SQLALCHEMY_DATABASE_URL = DATABASE_URL
+SQLALCHEMY_DATABASE_URL = DATABASE_URL or f"sqlite:///{DB_PATH.as_posix()}"
 
 # Check if using SQLite for thread safety
 if SQLALCHEMY_DATABASE_URL.startswith('sqlite'):

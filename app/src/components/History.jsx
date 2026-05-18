@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Upload from "./Upload";
+import API_BASE_URL from "../config";
 
 const History = () => {
   const [history, setHistory] = useState([]);
@@ -18,7 +19,7 @@ const History = () => {
   const loadHistory = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:8000/footprint_history", {
+    fetch(`${API_BASE_URL}/footprint_history`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())

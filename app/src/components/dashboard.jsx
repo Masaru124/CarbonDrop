@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
+import API_BASE_URL from "../config";
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
@@ -13,7 +14,7 @@ export default function Dashboard() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     if (token) {
-      fetch("http://localhost:8000/dashboard", {
+      fetch(`${API_BASE_URL}/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -27,7 +28,7 @@ export default function Dashboard() {
         });
 
       // Fetch user offsets
-      fetch("http://localhost:8000/user_offsets", {
+      fetch(`${API_BASE_URL}/user_offsets`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -35,7 +36,7 @@ export default function Dashboard() {
         .catch((error) => console.error("Error fetching offsets:", error));
 
       // Fetch user credits
-      fetch("http://localhost:8000/auth/me", {
+      fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -48,7 +49,7 @@ export default function Dashboard() {
   const refreshUserCredits = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:8000/auth/me", {
+    fetch(`${API_BASE_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -59,7 +60,7 @@ export default function Dashboard() {
   const downloadReport = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:8000/report/pdf", {
+    fetch(`${API_BASE_URL}/report/pdf`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.blob())

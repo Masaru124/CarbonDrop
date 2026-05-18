@@ -72,6 +72,7 @@ def clean_item_name(raw: str) -> str:
         'pack': '', 'packet': '', 'pack of': '', 'pk': '',
         'pc': '', 'piece': '', 'pieces': '', 'pcs': '',
         'ea': '', 'each': '', 'item': '',
+        'local': '', 'organic': '', 'fresh': '', 'imported': '', 'regional': '', 'seasonal': '', 'lkg': '', 'b': '',
     }
 
     # Apply corrections

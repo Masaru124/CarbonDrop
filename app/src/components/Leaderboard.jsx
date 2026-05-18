@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
 export default function Leaderboard() {
   const [data, setData] = useState([]);
@@ -10,7 +11,7 @@ export default function Leaderboard() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     if (token) {
-      fetch("http://localhost:8000/leaderboard", {
+      fetch(`${API_BASE_URL}/leaderboard`, {
         headers: { "Authorization": `Bearer ${token}` }
       })
         .then((res) => res.json())
