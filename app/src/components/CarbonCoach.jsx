@@ -1,122 +1,118 @@
-/**
- * Carbon Coach Component
- * Displays weekly carbon budget and adaptive recommendations
- */
+import Card from "../ui/Card";
+import Skeleton from "../ui/Skeleton";
 
-import React, { useEffect, useState } from "react";
-import { useCarbonCoach } from "../hooks/useCarbonBudgeting";
-import "./CarbonCoach.css";
+const statusConfig = {
+  low: { color: "bg-green-500", label: "Good", message: "Great job! You're well under your budget. Keep it up!" },
+  medium: { color: "bg-green-600", label: "On Track", message: "You're on track. Focus on mindful choices." },
+  high: { color: "bg-green-700", label: "Approaching Limit", message: "You're approaching your budget. Make mindful choices." },
+  exceeded: { color: "bg-red-500", label: "Exceeded", message: "You've exceeded your budget. Check out the recommendations below!" },
+};
 
-export function CarbonCoachCard() {
-  const { budget, loading, error } = useCarbonCoach();
+function getStatus(percent) {
+  if (percent <= 50) return "low";
+  if (percent <= 80) return "medium";
+  if (percent < 100) return "high";
+  return "exceeded";
+}
 
+export function CarbonCoachCard({ budget, loading, error }) {
   if (loading) {
     return (
-      <div className="carbon-coach-card loading">
-        Loading coach recommendations...
-      </div>
+      <Card>
+        <Skeleton className="h-6 w-48 mb-4" />
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20" />)}
+        </div>
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-8 w-full mb-4" />
+        <Skeleton className="h-4 w-3/4" />
+      </Card>
     );
   }
 
   if (error) {
-    return <div className="carbon-coach-card error">Error: {error}</div>;
+    return (
+      <Card className="border-red-700 bg-red-900/20">
+        <p className="text-red-400">Error loading coach data: {error}</p>
+      </Card>
+    );
   }
 
   if (!budget) {
     return (
-      <div className="carbon-coach-card">
-        Upload receipts to get personalized recommendations.
-      </div>
+      <Card>
+        <p className="text-gray-400 text-center">Upload receipts to get personalized recommendations.</p>
+      </Card>
     );
   }
 
-  const statusColor =
-    budget.progress_percent <= 50
-      ? "green"
-      : budget.progress_percent <= 100
-      ? "yellow"
-      : "red";
+  const status = getStatus(budget.progress_percent);
+  const config = statusConfig[status];
 
   return (
-    <div className="carbon-coach-card">
-      <h2>🧠 Your Carbon Coach</h2>
-
-      <div className="week-overview">
-        <div className="week-info">
-          <p className="week-dates">
-            {new Date(budget.week_start_date).toLocaleDateString()} -{" "}
-            {new Date(budget.week_end_date).toLocaleDateString()}
-          </p>
-        </div>
-
-        <div className="budget-targets">
-          <div className="budget-item">
-            <label>Weekly Limit</label>
-            <p className="target">
-              {budget.recommended_weekly_limit_kg} kg CO₂
-            </p>
-          </div>
-          <div className="budget-item">
-            <label>Daily Limit</label>
-            <p className="target">{budget.recommended_daily_limit_kg} kg CO₂</p>
-          </div>
-          <div className="budget-item">
-            <label>Last Week Avg</label>
-            <p className="historical">{budget.historical_weekly_avg} kg CO₂</p>
-          </div>
-        </div>
-
-        <div className="progress-bar-container">
-          <label>Weekly Progress</label>
-          <div className="progress-bar">
-            <div
-              className={`progress-fill ${statusColor}`}
-              style={{ width: `${Math.min(budget.progress_percent, 100)}%` }}
-            />
-          </div>
-          <p className="progress-text">
-            {budget.progress_percent.toFixed(1)}% of budget used
-          </p>
-        </div>
+    <Card>
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-2xl">🧠</span>
+        <h2 className="text-xl font-bold">Your Carbon Coach</h2>
+        <span className={`ml-auto px-3 py-1 rounded-full text-xs font-semibold text-white ${config.color}`}>
+          {config.label}
+        </span>
       </div>
 
-      <div className="tradeoffs-section">
-        <h3>💡 Smart Tradeoffs</h3>
-        <ul className="tradeoffs-list">
-          {budget.tradeoff_suggestions &&
-            budget.tradeoff_suggestions.map((suggestion, idx) => (
-              <li key={idx} className="tradeoff-item">
-                {suggestion}
+      <p className="text-sm text-gray-400 mb-6">
+        {new Date(budget.week_start_date).toLocaleDateString()} - {new Date(budget.week_end_date).toLocaleDateString()}
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        {[
+          { label: "Weekly Limit", value: `${budget.recommended_weekly_limit_kg} kg CO₂` },
+          { label: "Daily Limit", value: `${budget.recommended_daily_limit_kg} kg CO₂` },
+          { label: "Last Week Avg", value: `${budget.historical_weekly_avg} kg CO₂` },
+        ].map((item) => (
+          <div key={item.label} className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">{item.label}</p>
+            <p className="text-lg font-bold">{item.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-6">
+        <p className="text-sm font-semibold mb-2">Weekly Progress</p>
+        <div className="w-full h-5 bg-gray-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              status === "exceeded" ? "bg-red-500" : status === "high" ? "bg-yellow-500" : "bg-green-500"
+            }`}
+            style={{ width: `${Math.min(budget.progress_percent, 100)}%` }}
+          />
+        </div>
+        <p className="text-xs text-right mt-1 text-gray-400">
+          {budget.progress_percent.toFixed(1)}% of budget used
+        </p>
+      </div>
+
+      {budget.tradeoff_suggestions?.length > 0 && (
+        <div className="mb-6">
+          <h3 className="font-semibold mb-3">💡 Smart Tradeoffs</h3>
+          <ul className="space-y-2">
+            {budget.tradeoff_suggestions.map((s, idx) => (
+              <li key={idx} className="bg-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-300">
+                {s}
               </li>
             ))}
-        </ul>
-      </div>
+          </ul>
+        </div>
+      )}
 
-      <div className="coach-message">
-        {budget.progress_percent <= 50 && (
-          <p className="positive">
-            ✨ Great job! You're well under your budget. Keep it up!
-          </p>
-        )}
-        {budget.progress_percent > 50 && budget.progress_percent <= 80 && (
-          <p className="neutral">
-            📊 You're on track. Focus on the tradeoffs above to stay within
-            budget.
-          </p>
-        )}
-        {budget.progress_percent > 80 && budget.progress_percent < 100 && (
-          <p className="warning">
-            ⚠️ You're approaching your budget. Make mindful choices for the rest
-            of the week.
-          </p>
-        )}
-        {budget.progress_percent >= 100 && (
-          <p className="alert">
-            🚨 You've exceeded your budget. Check out the recommendations below!
-          </p>
-        )}
+      <div className={`rounded-lg p-4 text-center text-sm ${
+        status === "exceeded" ? "bg-red-500/20 text-red-300" :
+        status === "high" ? "bg-red-500/10 text-red-200" :
+        status === "medium" ? "bg-green-500/10 text-green-300" :
+        "bg-green-500/20 text-green-300"
+      }`}>
+        {config.message}
       </div>
-    </div>
+    </Card>
   );
 }
 
