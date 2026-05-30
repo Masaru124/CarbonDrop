@@ -34,7 +34,7 @@ export default function Sidebar() {
       <div className="p-5 border-b border-gray-800">
         <NavLink to="/dashboard" className="flex items-center gap-2 text-lg font-bold text-green-400">
           <Leaf className="h-6 w-6" />
-          CarbonTracker
+          CarbonDrop
         </NavLink>
       </div>
 

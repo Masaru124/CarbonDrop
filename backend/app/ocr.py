@@ -8,6 +8,38 @@ from pytesseract import Output
 
 IGNORE_KEYWORDS = {'TOTAL','SUBTOTAL','SUB-TOTAL','TAX','VAT','CHANGE','CASH','CARD','BALANCE','PAY','AMOUNT','DISCOUNT'}
 
+SCREENSHOT_NOISE_PHRASES = {
+    'order summary', 'bill details', 'order details', 'repeat order', 'view cart',
+    'how were your ordered items?', 'deliver to', 'paid online', 'download invoice',
+    'handling charge', 'delivery charges', 'delivery charge', 'product discount',
+    'mrp', 'item total', 'bill total', 'free gift', 'free gift', 'freegift'
+}
+
+NOISE_FRAGMENT_PATTERNS = [
+    r'^x\s*s$',
+    r'^x\s*$',
+    r'^s\s*$',
+    r'^xs$',
+    r'^x\s*\d+$',
+    r'^\d+\s*x\s*$',
+    r'^[a-z]\s+[a-z]\s*x\s+[a-z]$',
+    r'^[a-z]\s+x\s+[a-z]$',
+]
+
+ORDER_SUMMARY_START_MARKERS = {
+    'items in this order',
+    '2 items in this order',
+    '1 item in this order',
+    'ordered items',
+}
+
+ORDER_SUMMARY_END_MARKERS = {
+    'bill details',
+    'order details',
+    'how were your ordered items?',
+    'repeat order',
+}
+
 PRICE_RE_END = re.compile(r'(\d{1,5}(?:[\.,]\d{2})?)\s*(?:$|[€£$]|EUR|USD|GBP)')
 QTY_X_RE = re.compile(r'(\d+)\s*[xX]')
 QTY_PCS_RE = re.compile(r'(\d+)\s*(?:pcs?|PK|pack)', re.I)
@@ -27,6 +59,15 @@ def preprocess_image_bytes(image_bytes: bytes):
 def clean_item_name(raw: str) -> str:
     """Enhanced item name cleaning with better normalization."""
     text = raw.lower().strip()
+
+    if not text:
+        return ""
+
+    normalized = re.sub(r'\s+', ' ', text)
+    if any(phrase in normalized for phrase in SCREENSHOT_NOISE_PHRASES):
+        return ""
+    if any(re.fullmatch(pattern, normalized) for pattern in NOISE_FRAGMENT_PATTERNS):
+        return ""
 
     # Remove common OCR artifacts and noise
     text = re.sub(r'[^\w\s\-.,]', ' ', text)  # Replace non-alphanumeric with spaces
@@ -91,7 +132,48 @@ def clean_item_name(raw: str) -> str:
     if text in skip_keywords:
         return ""
 
+    stopwords = {'a', 'an', 'and', 'or', 'on', 'in', 'of', 'to', 'x', 'e', 's', 'es', 'at'}
+    tokens = [token for token in re.findall(r'[a-z]+', text) if token not in stopwords]
+    compact = re.sub(r'[^a-z0-9]+', '', text)
+    if len(compact) < 4:
+        return ""
+    if len(tokens) < 2:
+        return ""
+    if not any(len(token) >= 4 for token in tokens):
+        return ""
+
+    if any(phrase in text for phrase in SCREENSHOT_NOISE_PHRASES):
+        return ""
+
+    if any(re.fullmatch(pattern, text) for pattern in NOISE_FRAGMENT_PATTERNS):
+        return ""
+
     return text.capitalize()
+
+def _is_plausible_item_name(name: str) -> bool:
+    lowered = re.sub(r'\s+', ' ', str(name).lower()).strip()
+    if not lowered:
+        return False
+    if any(phrase in lowered for phrase in SCREENSHOT_NOISE_PHRASES):
+        return False
+    if any(re.fullmatch(pattern, lowered) for pattern in NOISE_FRAGMENT_PATTERNS):
+        return False
+
+    stopwords = {'a', 'an', 'and', 'or', 'on', 'in', 'of', 'to', 'x', 'e', 's', 'es', 'at'}
+    tokens = [token for token in re.findall(r'[a-z]+', lowered) if token not in stopwords]
+
+    compact = re.sub(r'[^a-z0-9]+', '', lowered)
+    if len(compact) < 4:
+        return False
+    if len(tokens) < 2:
+        return False
+    if not any(len(token) >= 4 for token in tokens):
+        return False
+
+    if len(re.findall(r'[a-z]', lowered)) < 4:
+        return False
+
+    return True
 
 def _reconstruct_lines(img):
     cfg = '--oem 3 --psm 6'
@@ -114,6 +196,23 @@ def _parse_line(line: str):
     if not raw:
         return None
 
+    lowered = re.sub(r'\s+', ' ', raw.lower()).strip()
+    if any(phrase in lowered for phrase in SCREENSHOT_NOISE_PHRASES):
+        return None
+    if any(re.fullmatch(pattern, lowered) for pattern in NOISE_FRAGMENT_PATTERNS):
+        return None
+
+    stopwords = {'a', 'an', 'and', 'or', 'on', 'in', 'of', 'to', 'x', 'e', 's', 'es', 'at'}
+    tokens = [token for token in re.findall(r'[a-z]+', lowered) if token not in stopwords]
+
+    compact = re.sub(r'[^a-z0-9]+', '', lowered)
+    if len(compact) < 4:
+        return None
+    if len(tokens) < 2:
+        return None
+    if not any(len(token) >= 4 for token in tokens):
+        return None
+
     # Skip non-item lines more aggressively
     up = re.sub(r'[^A-Z ]+', '', raw.upper())
     extended_skip_keywords = {
@@ -124,6 +223,9 @@ def _parse_line(line: str):
     }
 
     if any(k in up for k in extended_skip_keywords):
+        return None
+
+    if re.search(r'\b(?:handling charge|delivery charges|delivery charge|product discount|bill total|item total|mrp)\b', lowered):
         return None
 
     # Enhanced price regex patterns
@@ -176,6 +278,12 @@ def _parse_line(line: str):
 
     # Additional validation - skip if name is too short or looks like a code
     if len(name) < 2 or re.match(r'^[A-Z0-9]{1,3}$', name.upper()):
+        return None
+
+    if any(phrase in name.lower() for phrase in SCREENSHOT_NOISE_PHRASES):
+        return None
+
+    if not _is_plausible_item_name(name):
         return None
 
     return {
@@ -259,3 +367,88 @@ def _reconstruct_lines_enhanced(img, config, lang):
             lines.append(text)
 
     return lines
+
+def extract_order_summary_items_from_image(image_bytes: bytes):
+    """Extract item-card titles from ecommerce order-summary screenshots."""
+    items = []
+    seen = set()
+
+    configurations = [
+        {'preprocess': True, 'config': '--oem 3 --psm 6', 'lang': 'eng'},
+        {'preprocess': True, 'config': '--oem 3 --psm 11', 'lang': 'eng'},
+        {'preprocess': True, 'config': '--oem 3 --psm 4', 'lang': 'eng'},
+    ]
+
+    for config in configurations:
+        try:
+            img = preprocess_image_bytes(image_bytes) if config['preprocess'] else Image.open(io.BytesIO(image_bytes)).convert('RGB')
+            lines = [re.sub(r'\s+', ' ', line).strip(' -_,.:;()[]{}') for line in _reconstruct_lines_enhanced(img, config['config'], config['lang'])]
+        except Exception:
+            continue
+
+        if not lines:
+            continue
+
+        start_index = None
+        end_index = None
+        for index, line in enumerate(lines):
+            lowered = line.lower()
+            if start_index is None and any(marker in lowered for marker in ORDER_SUMMARY_START_MARKERS):
+                start_index = index + 1
+                continue
+            if start_index is not None and any(marker in lowered for marker in ORDER_SUMMARY_END_MARKERS):
+                end_index = index
+                break
+
+        if start_index is None:
+            start_index = 0
+
+        section_lines = lines[start_index:end_index] if end_index is not None else lines[start_index:]
+        buffer = []
+
+        def flush_buffer():
+            nonlocal buffer
+            if not buffer:
+                return
+            candidate = clean_item_name(' '.join(buffer))
+            if candidate and _is_plausible_item_name(candidate) and candidate not in seen:
+                seen.add(candidate)
+                items.append({
+                    'name': candidate,
+                    'qty': 1,
+                    'unit': 'item',
+                    'price': 0,
+                    'raw_line': candidate,
+                    'category': 'food' if any(token in candidate.lower() for token in {'milk', 'bread', 'momo', 'paneer', 'snack', 'cheese', 'butter'}) else 'other',
+                    'confidence': 'medium',
+                })
+            buffer = []
+
+        for line in section_lines:
+            lowered = line.lower().strip()
+            if not lowered:
+                flush_buffer()
+                continue
+            if any(phrase in lowered for phrase in SCREENSHOT_NOISE_PHRASES):
+                flush_buffer()
+                continue
+            if any(re.fullmatch(pattern, lowered) for pattern in NOISE_FRAGMENT_PATTERNS):
+                flush_buffer()
+                continue
+            if re.search(r'^\d+\s*(?:g|kg|ml|l|pcs?|pieces?|items?)\s*x\s*\d+$', lowered):
+                flush_buffer()
+                continue
+            if re.search(r'\b\d+\s*x\s*\d+\b', lowered):
+                flush_buffer()
+                continue
+            if re.search(r'\b(?:bill details|order details|handling charge|delivery charges|product discount|bill total|item total|mrp|paid online|deliver to|repeat order)\b', lowered):
+                flush_buffer()
+                continue
+            if len(re.findall(r'[a-z]', lowered)) >= 6 and len(lowered.split()) >= 2:
+                buffer.append(line)
+                continue
+            flush_buffer()
+
+        flush_buffer()
+
+    return items

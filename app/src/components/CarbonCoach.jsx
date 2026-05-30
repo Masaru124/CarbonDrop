@@ -104,6 +104,19 @@ export function CarbonCoachCard({ budget, loading, error }) {
         </div>
       )}
 
+      {budget.anomaly_insights?.length > 0 && (
+        <div className="mb-6">
+          <h3 className="font-semibold mb-3">⚠️ Unusual Activity</h3>
+          <ul className="space-y-2">
+            {budget.anomaly_insights.map((s, idx) => (
+              <li key={idx} className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2.5 text-sm text-amber-200">
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className={`rounded-lg p-4 text-center text-sm ${
         status === "exceeded" ? "bg-red-500/20 text-red-300" :
         status === "high" ? "bg-red-500/10 text-red-200" :

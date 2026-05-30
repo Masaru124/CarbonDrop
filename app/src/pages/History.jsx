@@ -73,6 +73,14 @@ export default function HistoryPage() {
                     <Badge variant="info">
                       {h.document_type?.charAt(0).toUpperCase() + h.document_type?.slice(1)}
                     </Badge>
+                    {h.parse_confidence && (
+                      <Badge variant={h.parse_confidence === "high" ? "success" : h.parse_confidence === "medium" ? "warning" : "danger"}>
+                        {h.parse_confidence} confidence
+                      </Badge>
+                    )}
+                    {h.parser_used && (
+                      <span className="text-xs text-gray-500">{h.parser_used}</span>
+                    )}
                     <span className="text-xs text-gray-500">{h.items?.length || 0} items</span>
                   </div>
                 </div>

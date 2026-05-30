@@ -65,12 +65,20 @@ def classify_document(text: str) -> DocumentType:
         'fuel', 'gasoline', 'diesel', 'electric vehicle', 'charging'
     ]
 
+    # Blinkit / ecommerce order-summary patterns
+    ecommerce_keywords = [
+        'order summary', 'download invoice', 'bill details', 'order details',
+        'repeat order', 'view cart', 'paid online', 'deliver to', 'items in this order',
+        'handling charge', 'delivery charges', 'product discount', 'free gift'
+    ]
+
     # Count keyword matches for each category
     grocery_score = sum(1 for keyword in grocery_keywords if keyword in text)
     restaurant_score = sum(1 for keyword in restaurant_keywords if keyword in text)
     utility_score = sum(1 for keyword in utility_keywords if keyword in text)
     invoice_score = sum(1 for keyword in invoice_keywords if keyword in text)
     transport_score = sum(1 for keyword in transport_keywords if keyword in text)
+    ecommerce_score = sum(1 for keyword in ecommerce_keywords if keyword in text)
 
     # Additional pattern matching for better accuracy
 
@@ -101,8 +109,13 @@ def classify_document(text: str) -> DocumentType:
         DocumentType.RESTAURANT: restaurant_score,
         DocumentType.UTILITY: utility_score,
         DocumentType.INVOICE: invoice_score,
-        DocumentType.TRANSPORT: transport_score
+        DocumentType.TRANSPORT: transport_score,
+        DocumentType.OTHER: ecommerce_score
     }
+
+    # Blinkit-like order summaries should not collapse into generic invoice parsing.
+    if ecommerce_score >= 2 and (grocery_score > 0 or price_lines > 1):
+        return DocumentType.GROCERY
 
     # If no clear winner and we have typical receipt patterns, default to grocery
     if max(scores.values()) == 0 and (has_currency or price_lines > 2):

@@ -68,6 +68,7 @@ class WeeklyCarbonBudget:
     recommended_daily_limit_kg: float
     historical_weekly_avg: float
     tradeoff_suggestions: List[str]
+    anomaly_insights: List[str]
 
 
 @dataclass
@@ -528,7 +529,8 @@ class AdaptiveCarbonCoach:
                 recommended_weekly_limit_kg=round(default_daily * 7, 2),
                 recommended_daily_limit_kg=round(default_daily, 2),
                 historical_weekly_avg=0,
-                tradeoff_suggestions=[]
+                tradeoff_suggestions=[],
+                anomaly_insights=[]
             )
         
         if target_percent_reduction is None:
@@ -544,6 +546,7 @@ class AdaptiveCarbonCoach:
         
         # Generate tradeoff suggestions
         tradeoffs = self._generate_tradeoffs(daily_footprints, historical_avg_daily)
+        anomalies = self._detect_anomaly_insights(daily_footprints)
         
         week_start = datetime.now().date()
         week_end = week_start + timedelta(days=6)
@@ -554,8 +557,41 @@ class AdaptiveCarbonCoach:
             recommended_weekly_limit_kg=target_weekly,
             recommended_daily_limit_kg=round(target_daily, 2),
             historical_weekly_avg=historical_weekly,
-            tradeoff_suggestions=tradeoffs
+            tradeoff_suggestions=tradeoffs,
+            anomaly_insights=anomalies
         )
+
+    def _detect_anomaly_insights(self, daily_footprints: List[DailyFootprint]) -> List[str]:
+        if len(daily_footprints) < 5:
+            return []
+
+        latest = daily_footprints[-1]
+        history = daily_footprints[:-1]
+        insights: List[str] = []
+
+        latest_total = latest.total_kg
+        history_totals = [day.total_kg for day in history]
+        baseline_total = statistics.mean(history_totals) if history_totals else 0
+
+        if baseline_total > 0 and latest_total > baseline_total * 1.4:
+            insights.append(
+                f"Latest day is {latest_total:.1f} kg CO2 vs your recent average of {baseline_total:.1f} kg CO2."
+            )
+
+        categories = set()
+        for day in daily_footprints:
+            categories.update(day.category_breakdown.keys())
+
+        for category in sorted(categories):
+            category_history = [day.category_breakdown.get(category, 0.0) for day in history]
+            category_latest = latest.category_breakdown.get(category, 0.0)
+            category_baseline = statistics.mean(category_history) if category_history else 0
+            if category_baseline > 0 and category_latest > category_baseline * 1.5 and category_latest - category_baseline >= 0.5:
+                insights.append(
+                    f"{category.capitalize()} spiked to {category_latest:.1f} kg CO2 vs your recent average of {category_baseline:.1f} kg CO2."
+                )
+
+        return insights[:3]
     
     def _generate_tradeoffs(
         self,

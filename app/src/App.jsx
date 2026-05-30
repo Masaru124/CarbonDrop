@@ -13,6 +13,7 @@ const InsightsPage = lazy(() => import("./pages/Insights"));
 const UploadPage = lazy(() => import("./pages/Home"));
 const SimulatorPage = lazy(() => import("./pages/Simulator"));
 const LeaderboardPage = lazy(() => import("./pages/Leaderboard"));
+const PosterPage = lazy(() => import("./pages/Poster"));
 
 function Loader() {
   return (
@@ -89,6 +90,8 @@ export default function App() {
               </DashboardRoute>
             }
           />
+
+          <Route path="/poster" element={<PosterPage />} />
 
           {/* Legacy redirects */}
           <Route path="/carbon-insights" element={<Navigate to="/insights" replace />} />

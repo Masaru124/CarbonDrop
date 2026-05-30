@@ -39,17 +39,17 @@ export default function HomePage() {
 
     try {
       const data = await api.post("/upload_receipt", fd);
-      setResult(data);
+      const normalizedItems = Array.isArray(data.items) ? data.items.filter(Boolean) : [];
+      const normalizedResult = { ...data, items: normalizedItems };
+      setResult(normalizedResult);
       toast("Receipt analyzed successfully!", "success");
 
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext("2d");
         if (chartRef.current) chartRef.current.destroy();
 
-        const labels = data.items.map(
-          (i) => `${i.matched_name || i.name} (${i.category || "food"})`
-        );
-        const values = data.items.map((i) => i.footprint);
+        const labels = normalizedItems.map((i) => `${i.matched_name || i.name || "Item"} (${i.category || "food"})`);
+        const values = normalizedItems.map((i) => i.footprint || 0);
 
         chartRef.current = new Chart(ctx, {
           type: "bar",
@@ -60,7 +60,8 @@ export default function HomePage() {
                 label: "Carbon Footprint (kg CO₂)",
                 data: values,
                 backgroundColor: (context) => {
-                  const item = data.items[context.dataIndex];
+                    const item = normalizedItems[context.dataIndex];
+                    if (!item) return "rgba(34, 197, 94, 0.6)";
                   const cat = item.category || "food";
                   const colors = {
                     transport: "rgba(59, 130, 246, 0.6)",
@@ -71,7 +72,8 @@ export default function HomePage() {
                   return colors[cat] || colors.food;
                 },
                 borderColor: (context) => {
-                  const item = data.items[context.dataIndex];
+                    const item = normalizedItems[context.dataIndex];
+                    if (!item) return "rgba(34, 197, 94, 1)";
                   const cat = item.category || "food";
                   const colors = {
                     transport: "rgba(59, 130, 246, 1)",
@@ -119,7 +121,7 @@ export default function HomePage() {
   }
 
   const matched = result
-    ? result.items.filter((it) => it.matched_name && it.matched_name !== "No match").length
+    ? result.items.filter((it) => it && it.matched_name && it.matched_name !== "No match").length
     : 0;
   const total = result ? result.items.length : 0;
   const matchRate = total > 0 ? Math.round((matched / total) * 100) : 0;
@@ -139,7 +141,7 @@ export default function HomePage() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-full">
             <label className="flex flex-col items-center gap-3 p-8 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:border-green-500/50 transition">
-              <FileIcon />
+              <UploadIcon className="h-10 w-10 text-gray-500" />
               <span className="text-sm text-gray-400">
                 {file ? file.name : "Drop a receipt image here or click to browse"}
               </span>
@@ -184,6 +186,16 @@ export default function HomePage() {
                 >
                   {matchRate >= 80 ? "Excellent" : matchRate >= 60 ? "Good" : "Needs Improvement"}
                 </Badge>
+                {result.parse_confidence && (
+                  <Badge variant={result.parse_confidence === "high" ? "success" : result.parse_confidence === "medium" ? "warning" : "danger"}>
+                    Parser {result.parse_confidence}
+                  </Badge>
+                )}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-400">
+                {result.parser_used && <span className="px-2 py-1 rounded-full bg-gray-900/70">Parser: {result.parser_used}</span>}
+                {result.merchant && <span className="px-2 py-1 rounded-full bg-gray-900/70">Merchant: {result.merchant}</span>}
+                {result.merchant_type && <span className="px-2 py-1 rounded-full bg-gray-900/70">Type: {result.merchant_type}</span>}
               </div>
             </div>
 
@@ -201,11 +213,12 @@ export default function HomePage() {
                 </thead>
                 <tbody>
                   {result.items.map((it, idx) => {
+                    if (!it) return null;
                     const isTop3 = result.items
                       .slice()
                       .sort((a, b) => b.footprint - a.footprint)
                       .slice(0, 3)
-                      .some((t) => t.name === it.name);
+                      .some((t) => t && t.name === it.name);
                     return (
                       <tr
                         key={idx}
@@ -251,13 +264,5 @@ export default function HomePage() {
         </div>
       )}
     </div>
-  );
-}
-
-function FileIcon() {
-  return (
-    <svg className="h-10 w-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-    </svg>
   );
 }

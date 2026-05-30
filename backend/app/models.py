@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum as SQLEnum, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
@@ -22,6 +22,10 @@ class Receipt(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     total_footprint = Column(Float)
     document_type = Column(String, default="grocery")
+    parser_used = Column(String, nullable=True)
+    parse_confidence = Column(String, nullable=True)
+    merchant = Column(String, nullable=True)
+    merchant_type = Column(String, nullable=True)
     date = Column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", back_populates="receipts")
@@ -41,6 +45,23 @@ class Item(Base):
     co2_per_unit = Column(Float, nullable=True)  # CO2 emissions per unit
 
     receipt = relationship("Receipt", back_populates="items")
+
+
+class EmissionFactor(Base):
+    __tablename__ = "emission_factors"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    category = Column(String, nullable=False, index=True)
+    subcategory = Column(String, nullable=True, index=True)
+    kg_co2e_per_unit = Column(Float, nullable=False)
+    unit = Column(String, nullable=False, index=True)
+    confidence = Column(String, nullable=False, index=True)
+    source = Column(String, nullable=True, index=True)
+    source_url = Column(String, nullable=True)
+    region = Column(String, default="global", index=True)
+    notes = Column(Text, nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class UserOffset(Base):
     __tablename__ = "user_offsets"

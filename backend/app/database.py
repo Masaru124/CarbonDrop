@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
@@ -32,3 +32,26 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def ensure_receipt_metadata_columns():
+    if not SQLALCHEMY_DATABASE_URL.startswith('sqlite'):
+        return
+
+    inspector = inspect(engine)
+    if 'receipts' not in inspector.get_table_names():
+        return
+
+    existing_columns = {column['name'] for column in inspector.get_columns('receipts')}
+    required_columns = {
+        'parser_used': 'TEXT',
+        'parse_confidence': 'TEXT',
+        'merchant': 'TEXT',
+        'merchant_type': 'TEXT',
+    }
+
+    with engine.begin() as connection:
+        for column_name, column_type in required_columns.items():
+            if column_name in existing_columns:
+                continue
+            connection.execute(text(f'ALTER TABLE receipts ADD COLUMN {column_name} {column_type}'))

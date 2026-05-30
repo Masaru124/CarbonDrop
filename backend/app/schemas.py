@@ -40,6 +40,10 @@ class ReceiptBase(BaseModel):
     document_type: DocumentType = DocumentType.GROCERY
     items: List[ItemBase]
     date: datetime
+    parser_used: Optional[str] = None
+    parse_confidence: Optional[str] = None
+    merchant: Optional[str] = None
+    merchant_type: Optional[str] = None
 
 # ------------------
 # Dashboard & Leaderboard
@@ -156,6 +160,7 @@ class WeeklyCarbonBudgetSchema(BaseModel):
     historical_weekly_avg: float
     progress_percent: Optional[float]
     tradeoff_suggestions: List[str]
+    anomaly_insights: List[str] = []
 
 
 class RecipeSuggestionSchema(BaseModel):

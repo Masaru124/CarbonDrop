@@ -23,6 +23,7 @@ from .carbon_budgeting import (
 from fastapi import APIRouter
 
 models.Base.metadata.create_all(bind=database.engine)
+database.ensure_receipt_metadata_columns()
 
 app = FastAPI(title='EcoBasket API')
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)
@@ -76,16 +77,29 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'OCR failed: {e}')
 
-    # Normalize quantities
+    # Preserve parsed quantities for non-food items; the matcher handles the raw units.
     items = []
     for it in items_raw:
-        qty_kg, _ = normalize_quantity(f"{it.get('qty', 1)} {it.get('name', '')}")
-        category = it.get('category', 'food')  # Default to food for backward compatibility
+        category = str(it.get('category', 'other') or 'other').lower()
+        qty = it.get('qty', 1)
+        unit = it.get('unit', 'item') or 'item'
+        try:
+            qty = float(qty)
+        except (TypeError, ValueError):
+            qty = 1.0
+
+        if category in {'food', 'restaurant'}:
+            qty_text = f"{qty} {unit} {it.get('name', '')}"
+            qty_kg, _ = normalize_quantity(qty_text)
+            qty = qty_kg
+            if unit in {'', 'item'}:
+                unit = 'kg'
+
         items.append({
             'name': it.get('name', ''),
-            'qty': qty_kg,
+            'qty': qty,
             'category': category,
-            'unit': it.get('unit', 'kg')
+            'unit': unit
         })
 
     results, total = matcher.match_and_compute(items)
@@ -95,6 +109,10 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
         user_id=current_user.id,
         total_footprint=total,
         document_type=document_type,
+        parser_used=parsed_data.get('parser_used'),
+        parse_confidence=parsed_data.get('parse_confidence'),
+        merchant=parsed_data.get('merchant'),
+        merchant_type=parsed_data.get('merchant_type'),
         date=datetime.utcnow()
     )
     db.add(receipt)
@@ -141,7 +159,11 @@ async def upload_receipt(file: UploadFile = File(...), current_user: models.User
             match_score=getattr(i, 'match_score', None),
             co2_per_unit=getattr(i, 'co2_per_unit', None)
         ) for i in receipt_items],
-        date=receipt.date
+        date=receipt.date,
+        parser_used=parsed_data.get('parser_used'),
+        parse_confidence=parsed_data.get('parse_confidence'),
+        merchant=parsed_data.get('merchant'),
+        merchant_type=parsed_data.get('merchant_type')
     )
     return receipt_data
 
@@ -245,7 +267,11 @@ def footprint_history(current_user: models.User = Depends(auth.get_current_user)
                 match_score=getattr(i, 'match_score', None),
                 co2_per_unit=getattr(i, 'co2_per_unit', None)
             ) for i in items],
-            date=receipt.date
+            date=receipt.date,
+            parser_used=getattr(receipt, 'parser_used', None),
+            parse_confidence=getattr(receipt, 'parse_confidence', None),
+            merchant=getattr(receipt, 'merchant', None),
+            merchant_type=getattr(receipt, 'merchant_type', None)
         )
         result.append(receipt_data)
     return result
@@ -497,7 +523,17 @@ def get_carbon_forecast(
         {
             "date": r.date,
             "total_footprint": r.total_footprint,
-            "items": []
+            "items": [
+                {
+                    "name": i.name,
+                    "matched_name": i.matched_name,
+                    "qty": i.qty,
+                    "unit": i.unit,
+                    "footprint": i.footprint,
+                    "category": i.category
+                }
+                for i in db.query(models.Item).filter(models.Item.receipt_id == r.id).all()
+            ]
         }
         for r in receipts_db
     ]
@@ -637,6 +673,7 @@ def get_carbon_coach(
     
     # Get budget recommendation
     budget = carbon_coach.calculate_weekly_budget(daily_aggregations)
+    anomaly_insights = carbon_coach._detect_anomaly_insights(daily_aggregations)
     
     # Calculate current week's progress
     week_start = datetime.utcnow() - timedelta(days=datetime.utcnow().weekday())
@@ -655,7 +692,8 @@ def get_carbon_coach(
         recommended_daily_limit_kg=budget.recommended_daily_limit_kg,
         historical_weekly_avg=budget.historical_weekly_avg,
         progress_percent=round(min(progress_percent, 100), 1),
-        tradeoff_suggestions=budget.tradeoff_suggestions
+        tradeoff_suggestions=budget.tradeoff_suggestions,
+        anomaly_insights=anomaly_insights
     )
 
 

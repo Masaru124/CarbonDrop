@@ -1,0 +1,417 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="4800" height="3600" viewBox="0 0 4800 3600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#05100c"/>
+      <stop offset="48%" stop-color="#081713"/>
+      <stop offset="100%" stop-color="#06110f"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#67d64c"/>
+      <stop offset="52%" stop-color="#d7f156"/>
+      <stop offset="100%" stop-color="#ffb83d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="rgba(102, 214, 76, 0.28)"/>
+      <stop offset="100%" stop-color="rgba(102, 214, 76, 0)"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#063014" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+
+  <rect width="4800" height="3600" fill="url(#bg)"/>
+  <circle cx="3600" cy="280" r="520" fill="url(#glow)"/>
+  <circle cx="860" cy="420" r="280" fill="rgba(95, 202, 84, 0.10)"/>
+  <circle cx="4100" cy="3020" r="360" fill="rgba(159, 240, 127, 0.08)"/>
+
+  <g transform="translate(86 78)">
+    <rect x="0" y="0" width="4620" height="3440" rx="64" fill="rgba(7,16,12,0.80)" stroke="rgba(153, 224, 118, 0.18)" stroke-width="4" filter="url(#softShadow)"/>
+
+    <g transform="translate(86 88)">
+      <text x="0" y="28" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="900" fill="#ffffff" letter-spacing="4">AMC ENGINEERING COLLEGE (AUTONOMOUS)</text>
+      <text x="0" y="74" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="800" fill="#cfe6d7" letter-spacing="2">DEPARTMENT OF CSE (DS)</text>
+      <rect x="0" y="110" width="4450" height="42" rx="21" fill="rgba(90, 164, 73, 0.75)"/>
+      <text x="2225" y="140" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="800" text-anchor="middle" fill="#effff2" letter-spacing="6">PROJECT POSTER   |   CARBONDROP   |   CARBON FOOTPRINT TRACKING &amp; ANALYTICS</text>
+    </g>
+
+    <g transform="translate(116 220)">
+      <rect x="0" y="0" width="410" height="410" rx="34" fill="rgba(14, 24, 16, 0.96)" stroke="rgba(185, 240, 149, 0.28)" stroke-width="4"/>
+      <circle cx="205" cy="148" r="86" fill="rgba(103, 214, 76, 0.12)" stroke="rgba(195, 245, 160, 0.22)" stroke-width="4"/>
+      <path d="M160 132 C164 93, 190 64, 228 64 C278 64, 313 107, 306 155 C328 164, 342 184, 342 209 C342 246, 313 274, 276 274 L166 274 C130 274, 102 245, 102 209 C102 177, 127 150, 160 148 Z" fill="rgba(235, 255, 238, 0.90)"/>
+      <path d="M208 262 C182 287, 165 316, 160 342 C155 370, 177 390, 205 390 C233 390, 255 370, 250 342 C245 316, 228 287, 208 262 Z" fill="url(#hero)" opacity="0.95"/>
+      <text x="205" y="352" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#08110a" letter-spacing="2">CD</text>
+      <text x="205" y="394" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="800" fill="#cfe8d7">CARBONDROP</text>
+    </g>
+
+    <g transform="translate(560 214)">
+      <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="140" font-weight="900" fill="url(#hero)" filter="url(#textShadow)" letter-spacing="4">CARBON DROP</text>
+      <text x="4" y="148" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="800" fill="#dbece1" letter-spacing="2">AI-powered carbon footprint tracking, forecasting, coaching, and action planning.</text>
+      <text x="4" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600" fill="#b9d0c0">Turns everyday receipts, trips, and habits into clear emissions insights.</text>
+    </g>
+
+    <g transform="translate(4040 170)">
+      <rect x="0" y="0" width="330" height="82" rx="18" fill="rgba(18, 30, 20, 0.96)" stroke="rgba(178, 239, 140, 0.28)" stroke-width="4"/>
+      <text x="165" y="40" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#eaffdb" letter-spacing="2">REAL-TIME</text>
+      <text x="165" y="63" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="800" fill="#c3ddca">analytics dashboard</text>
+      <rect x="0" y="100" width="330" height="82" rx="18" fill="rgba(18, 30, 20, 0.96)" stroke="rgba(178, 239, 140, 0.28)" stroke-width="4"/>
+      <text x="165" y="140" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#ffd86f" letter-spacing="2">AI-READY</text>
+      <text x="165" y="163" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="800" fill="#c3ddca">recommendations engine</text>
+    </g>
+
+    
+  <rect x="120" y="560" width="1300" height="610" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+    
+  <rect x="1460" y="560" width="1600" height="610" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+    
+  <rect x="3090" y="560" width="1450" height="610" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+
+    
+  <text x="200" y="622" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">1. PROJECT OVERVIEW</text>
+
+    
+  <text x="1548" y="622" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">2. PROCESS WORKFLOW</text>
+
+    
+  <text x="3160" y="622" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">3. WORKING MODEL</text>
+
+
+    <g transform="translate(164 684)">
+      <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600" fill="#dbe9e0">CarbonDrop is a full-stack sustainability platform that measures and explains personal carbon footprint data.</text>
+      <text x="0" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600" fill="#dbe9e0">It combines document intelligence, analytics, forecasting, and recommendations in one workflow.</text>
+      <text x="0" y="114" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Domain:</text>
+      <text x="140" y="114" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Sustainability and environmental analytics</text>
+      <text x="0" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Platform:</text>
+      <text x="140" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Web application</text>
+      <text x="0" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Goal:</text>
+      <text x="140" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Track, analyze, and reduce emissions</text>
+      <text x="0" y="252" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Primary output:</text>
+      <text x="182" y="252" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Dashboards, forecasts, coaching, and action plans</text>
+    </g>
+
+    <g transform="translate(1518 696)">
+      <rect x="0" y="0" width="1420" height="500" rx="30" fill="rgba(8, 15, 12, 0.72)" stroke="rgba(144, 214, 95, 0.18)" stroke-width="3"/>
+      <text x="60" y="58" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="900" fill="#9ff0a2">NO DATA / IDLE</text>
+      <rect x="60" y="82" width="610" height="150" rx="22" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="3"/>
+      <text x="92" y="126" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" fill="#dff1e0">No receipt or activity is uploaded.</text>
+      <text x="92" y="164" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#c6d6ca">Tracking: OFF</text>
+      <text x="92" y="198" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#c6d6ca">Recommendations: Pending</text>
+
+      <text x="752" y="58" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="900" fill="#ffd86f">INPUT DETECTED / ACTIVE</text>
+      <rect x="752" y="82" width="610" height="150" rx="22" fill="rgba(61, 53, 24, 0.84)" stroke="rgba(255, 205, 106, 0.24)" stroke-width="3"/>
+      <text x="784" y="126" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" fill="#fff3d0">Receipt, trip, or usage data is captured.</text>
+      <text x="784" y="164" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#f0e4c2">Tracking: ON</text>
+      <text x="784" y="198" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#f0e4c2">Insights: Live and updated</text>
+
+      <g transform="translate(60 274)">
+        
+  <rect x="0" y="0" width="210" height="72" rx="20" fill="rgba(34, 57, 33, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="105" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">CAPTURE</text>
+
+        <path d="M228 36 H298" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="298,36 274,22 274,50" fill="#9ff0a2"/>
+        
+  <rect x="318" y="0" width="250" height="72" rx="20" fill="rgba(31, 51, 44, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="443" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">READ + PARSE</text>
+
+        <path d="M588 36 H658" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="658,36 634,22 634,50" fill="#9ff0a2"/>
+        
+  <rect x="678" y="0" width="288" height="72" rx="20" fill="rgba(61, 53, 24, 0.95)" stroke="rgba(255, 205, 106, 0.24)" stroke-width="3"/>
+  <text x="822" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">CALCULATE</text>
+
+        <path d="M986 36 H1056" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="1056,36 1032,22 1032,50" fill="#9ff0a2"/>
+        
+  <rect x="1076" y="0" width="264" height="72" rx="20" fill="rgba(22, 54, 33, 0.95)" stroke="rgba(145, 239, 166, 0.24)" stroke-width="3"/>
+  <text x="1208" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">ACTION</text>
+
+      </g>
+      <text x="60" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#d7e8de">The same pipeline drives receipts, trips, and daily habits into a single carbon budget view.</text>
+    </g>
+
+    <g transform="translate(3120 680)">
+      <rect x="0" y="0" width="1420" height="500" rx="30" fill="rgba(8, 15, 12, 0.72)" stroke="rgba(144, 214, 95, 0.18)" stroke-width="3"/>
+      <text x="58" y="58" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="900" fill="#9ff0a2">MODULES</text>
+      <text x="58" y="118" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800" fill="#ffffff">1. Carbon Coach</text>
+      <text x="58" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d7e8de">Weekly budget and tradeoff recommendations</text>
+      <text x="58" y="224" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800" fill="#ffffff">2. Forecast Graph</text>
+      <text x="58" y="266" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d7e8de">30-day emissions prediction and trend view</text>
+      <text x="58" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800" fill="#ffffff">3. Simulation Tool</text>
+      <text x="58" y="372" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d7e8de">What-if scenarios for behavior changes</text>
+      <text x="58" y="436" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800" fill="#ffffff">4. 30-Day Plan</text>
+      <text x="58" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d7e8de">Action list, recipes, commutes, and habits</text>
+    </g>
+
+    <g transform="translate(120 1220)">
+      
+  <rect x="0" y="0" width="1400" height="640" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+      
+  <rect x="1470" y="0" width="1370" height="640" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+      
+  <rect x="2870" y="0" width="1600" height="640" rx="34" fill="rgba(11,21,16,0.94)" stroke="rgba(142, 214, 90, 0.24)" stroke-width="4"/>
+
+
+      
+  <text x="56" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">4. MODULES</text>
+
+        
+  <text x="1518" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">5. KEY FEATURES</text>
+
+        
+  <text x="2940" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="2">6. SYSTEM ARCHITECTURE</text>
+
+
+      <g transform="translate(56 108)">
+        <rect x="0" y="0" width="620" height="210" rx="24" fill="rgba(7,14,22,0.65)" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <rect x="686" y="0" width="620" height="210" rx="24" fill="rgba(7,14,22,0.65)" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <rect x="0" y="240" width="620" height="210" rx="24" fill="rgba(7,14,22,0.65)" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <rect x="686" y="240" width="620" height="210" rx="24" fill="rgba(7,14,22,0.65)" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <text x="32" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#9ff0a2">User Management</text>
+        <text x="32" y="92" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Register, login, and profile handling</text>
+        <text x="32" y="136" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Roles and protected access</text>
+
+        <text x="718" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#ffd86f">Carbon Calculator</text>
+        <text x="718" y="92" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Emission estimation by activity</text>
+        <text x="718" y="136" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Factor mapping and totals</text>
+
+        <text x="32" y="288" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#9ff0a2">Dashboard</text>
+        <text x="32" y="332" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Charts, forecasts, and insights</text>
+        <text x="32" y="376" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Visual progress and comparison</text>
+
+        <text x="718" y="288" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#ffd86f">Activity Tracker</text>
+        <text x="718" y="332" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Daily actions and footprint history</text>
+        <text x="718" y="376" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Action logging and progress</text>
+      </g>
+
+      <g transform="translate(1518 108)">
+        <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">5 REST APIs</text>
+        <text x="0" y="46" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Insights, forecast, simulate, coach, and 30-day plan</text>
+        <text x="0" y="102" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">7 custom hooks</text>
+        <text x="0" y="148" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Shared data access for carbon views and refresh flows</text>
+        <text x="0" y="204" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">4 core modules</text>
+        <text x="0" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Coach, Forecast, Simulation, and Plan views</text>
+        <text x="0" y="306" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">3 database tables</text>
+        <text x="0" y="352" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">CarbonGoal, SustainabilityPlan, DailyPlanAction</text>
+      </g>
+
+      <g transform="translate(2940 108)">
+        <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">Frontend</text>
+        <text x="0" y="46" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">React + Vite + Tailwind CSS</text>
+        <text x="0" y="106" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">Backend</text>
+        <text x="0" y="152" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">FastAPI services and engines</text>
+        <text x="0" y="212" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">Database</text>
+        <text x="0" y="258" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">SQLAlchemy models and tables</text>
+        <text x="0" y="318" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7e8de">Auth + Utilities</text>
+        <text x="0" y="364" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">JWT, Axios, Chart.js, Lucide</text>
+      </g>
+    </g>
+
+    <g transform="translate(120 1910)">
+      
+  <rect x="0" y="0" width="4620" height="340" rx="34" fill="rgba(11,21,16,0.96)" stroke="rgba(142, 214, 90, 0.20)" stroke-width="4"/>
+
+      <text x="68" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">7. APPLICATIONS</text>
+      <text x="1580" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">8. STATISTICS (PROJECT)</text>
+      <text x="3130" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">9. PROCESS STEPS (USER JOURNEY)</text>
+
+      <g transform="translate(68 118)">
+        
+  <circle cx="0" cy="14" r="6" fill="#8fe6a9"/>
+  <text x="20" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Households can track food, travel, and energy impact</text>
+
+        
+  <circle cx="0" cy="62" r="6" fill="#8fe6a9"/>
+  <text x="20" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Campuses can monitor awareness campaigns and reporting</text>
+
+        
+  <circle cx="0" cy="110" r="6" fill="#8fe6a9"/>
+  <text x="20" y="120" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Teams can compare activity and reduction goals</text>
+
+        
+  <circle cx="0" cy="158" r="6" fill="#8fe6a9"/>
+  <text x="20" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Sustainability programs can guide behavior change</text>
+
+      </g>
+
+      <g transform="translate(1580 118)">
+        
+  <rect x="0" y="0" width="240" height="72" rx="20" fill="rgba(34, 57, 33, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="120" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">4 MODULES</text>
+
+        
+  <rect x="270" y="0" width="210" height="72" rx="20" fill="rgba(61, 53, 24, 0.95)" stroke="rgba(255, 205, 106, 0.24)" stroke-width="3"/>
+  <text x="375" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">5 APIs</text>
+
+        
+  <rect x="510" y="0" width="200" height="72" rx="20" fill="rgba(31, 51, 44, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="610" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">7 HOOKS</text>
+
+        
+  <rect x="740" y="0" width="310" height="72" rx="20" fill="rgba(22, 54, 33, 0.95)" stroke="rgba(145, 239, 166, 0.24)" stroke-width="3"/>
+  <text x="895" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">100% RESPONSIVE UI</text>
+
+        <text x="0" y="132" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#d8e9f4">Real-time analytics, modular UI, and protected access.</text>
+        <text x="0" y="178" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#d8e9f4">Built for measurable carbon planning and comparison.</text>
+      </g>
+
+      <g transform="translate(3130 118)">
+        
+  <circle cx="0" cy="14" r="6" fill="#8fe6a9"/>
+  <text x="20" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">1. Register / log in</text>
+
+        
+  <circle cx="0" cy="62" r="6" fill="#8fe6a9"/>
+  <text x="20" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">2. Add activities or upload receipts</text>
+
+        
+  <circle cx="0" cy="110" r="6" fill="#8fe6a9"/>
+  <text x="20" y="120" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">3. Calculate footprint and budget</text>
+
+        
+  <circle cx="0" cy="158" r="6" fill="#8fe6a9"/>
+  <text x="20" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">4. Review recommendations and progress</text>
+
+        
+  <circle cx="0" cy="206" r="6" fill="#8fe6a9"/>
+  <text x="20" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">5. Act, compare, and improve</text>
+
+      </g>
+    </g>
+
+    <g transform="translate(120 2292)">
+      
+  <rect x="0" y="0" width="4620" height="590" rx="34" fill="rgba(10,18,14,0.96)" stroke="rgba(142, 214, 90, 0.20)" stroke-width="4"/>
+
+      <text x="68" y="74" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">10. PIPELINE / FLOW DIAGRAM</text>
+      <text x="1580" y="74" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">11. TECH STACK</text>
+      <text x="3130" y="74" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">12. OUTCOMES</text>
+
+      <g transform="translate(68 120)">
+        
+  <rect x="0" y="0" width="190" height="72" rx="20" fill="rgba(34, 57, 33, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="95" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">START</text>
+
+        <path d="M210 36 H274" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="274,36 250,22 250,50" fill="#9ff0a2"/>
+        
+  <rect x="294" y="0" width="250" height="72" rx="20" fill="rgba(31, 51, 44, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="419" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">DATA INPUT</text>
+
+        <path d="M564 36 H628" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="628,36 604,22 604,50" fill="#9ff0a2"/>
+        
+  <rect x="648" y="0" width="250" height="72" rx="20" fill="rgba(61, 53, 24, 0.95)" stroke="rgba(255, 205, 106, 0.24)" stroke-width="3"/>
+  <text x="773" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">VALIDATE</text>
+
+        <path d="M918 36 H982" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="982,36 958,22 958,50" fill="#9ff0a2"/>
+        
+  <rect x="1002" y="0" width="260" height="72" rx="20" fill="rgba(22, 54, 33, 0.95)" stroke="rgba(145, 239, 166, 0.24)" stroke-width="3"/>
+  <text x="1132" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">CALCULATE</text>
+
+        <path d="M1282 36 H1346" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="1346,36 1322,22 1322,50" fill="#9ff0a2"/>
+        
+  <rect x="1366" y="0" width="220" height="72" rx="20" fill="rgba(61, 53, 24, 0.95)" stroke="rgba(255, 205, 106, 0.24)" stroke-width="3"/>
+  <text x="1476" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">AI TIP</text>
+
+        <path d="M1606 36 H1670" stroke="#9ff0a2" stroke-width="8" stroke-linecap="round"/>
+        <polygon points="1670,36 1646,22 1646,50" fill="#9ff0a2"/>
+        
+  <rect x="1690" y="0" width="180" height="72" rx="20" fill="rgba(34, 57, 33, 0.95)" stroke="rgba(152, 219, 111, 0.24)" stroke-width="3"/>
+  <text x="1780" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#f7fbff" letter-spacing="2">SAVE</text>
+
+        <text x="0" y="128" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#d8e9f4">Capture → Validate → Calculate → Suggest → Store → Dashboard.</text>
+        <text x="0" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#d8e9f4">Every step keeps the footprint explainable and actionable.</text>
+      </g>
+
+      <g transform="translate(1580 120)">
+        <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#9ff0a2">FRONTEND</text>
+        <text x="0" y="44" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">React, Vite, Tailwind CSS</text>
+        <text x="0" y="94" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#ffd86f">BACKEND</text>
+        <text x="0" y="138" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">FastAPI, Python, SQLAlchemy</text>
+        <text x="0" y="188" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#9ff0a2">DATABASE</text>
+        <text x="0" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Carbon goals, plans, and daily actions</text>
+        <text x="0" y="282" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#ffd86f">TOOLS</text>
+        <text x="0" y="326" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" fill="#d8e9f4">Chart.js, Axios, Lucide React, JWT</text>
+      </g>
+
+      <g transform="translate(3130 120)">
+        
+  <circle cx="0" cy="14" r="6" fill="#8fe6a9"/>
+  <text x="20" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Lower household, campus, and team emissions</text>
+
+        
+  <circle cx="0" cy="62" r="6" fill="#8fe6a9"/>
+  <text x="20" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Make hidden carbon visible in everyday activity</text>
+
+        
+  <circle cx="0" cy="110" r="6" fill="#8fe6a9"/>
+  <text x="20" y="120" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Support scenario comparison before decisions</text>
+
+        
+  <circle cx="0" cy="158" r="6" fill="#8fe6a9"/>
+  <text x="20" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Turn insight into measurable reduction</text>
+
+        <rect x="0" y="220" width="1260" height="170" rx="26" fill="rgba(8,15,12,0.74)" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <text x="40" y="272" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="900" fill="#9ff0a2">CLOSING NOTE</text>
+        <text x="40" y="324" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Measure today. Reduce tomorrow. Sustain forever.</text>
+      </g>
+    </g>
+
+    <g transform="translate(120 2920)">
+      <rect x="0" y="0" width="4620" height="300" rx="30" fill="rgba(8,16,12,0.96)" stroke="rgba(142, 214, 90, 0.20)" stroke-width="4"/>
+      <text x="70" y="68" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">13. FUTURE ENHANCEMENTS</text>
+      <text x="1600" y="68" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">14. TIMELINE</text>
+      <text x="3080" y="68" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="3">15. TEAM CARBON DROP</text>
+
+      <g transform="translate(70 114)">
+        
+  <circle cx="0" cy="14" r="6" fill="#8fe6a9"/>
+  <text x="20" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Mobile app for Android and iOS</text>
+
+        
+  <circle cx="0" cy="62" r="6" fill="#8fe6a9"/>
+  <text x="20" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">IoT integrations for automatic data capture</text>
+
+        
+  <circle cx="0" cy="110" r="6" fill="#8fe6a9"/>
+  <text x="20" y="120" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Weather-aware and calendar-aware modeling</text>
+
+      </g>
+
+      <g transform="translate(1600 114)">
+        
+  <circle cx="0" cy="14" r="6" fill="#8fe6a9"/>
+  <text x="20" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Requirement analysis and system design - 1 week</text>
+
+        
+  <circle cx="0" cy="62" r="6" fill="#8fe6a9"/>
+  <text x="20" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Backend engine and API development - 4 weeks</text>
+
+        
+  <circle cx="0" cy="110" r="6" fill="#8fe6a9"/>
+  <text x="20" y="120" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600" fill="#d8e9f4">Frontend dashboards and modules - 4 weeks</text>
+
+      </g>
+
+      <g transform="translate(3080 114)">
+        <text x="0" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">Project team:</text>
+        <text x="160" y="0" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#d8e9f4">CarbonDrop development team</text>
+        <text x="0" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">Guide:</text>
+        <text x="90" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#d8e9f4">Project supervision and review</text>
+        <text x="0" y="104" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">Focus:</text>
+        <text x="90" y="104" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#d8e9f4">Carbon footprint tracking and reduction</text>
+      </g>
+    </g>
+  </g>
+</svg>
